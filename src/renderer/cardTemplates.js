@@ -81,26 +81,30 @@ export function generateProfileSvg(user = {}) {
   const coins = formatNumber(user.coins || 0);
 
   const skills = [
-    { name: 'Woodcutting', emoji: '🪓', state: user.skills?.woodcutting || { level: 1, xp: 0 } },
-    { name: 'Mining', emoji: '⛏️', state: user.skills?.mining || { level: 1, xp: 0 } },
-    { name: 'Crafting', emoji: '⚒️', state: user.skills?.crafting || { level: 1, xp: 0 } },
-    { name: 'Fishing', emoji: '🎣', state: user.skills?.fishing || { level: 1, xp: 0 } },
-    { name: 'Exploration', emoji: '🧭', state: user.skills?.exploration || { level: 1, xp: 0 } }
+    { name: 'Woodcutting', icon: '🌲', data: user.skills?.woodcutting || { level: 1, xp: 0 } },
+    { name: 'Mining', icon: '⛏️', data: user.skills?.mining || { level: 1, xp: 0 } },
+    { name: 'Crafting', icon: '🔨', data: user.skills?.crafting || { level: 1, xp: 0 } },
+    { name: 'Fishing', icon: '🎣', data: user.skills?.fishing || { level: 1, xp: 0 } }
   ];
 
-  const skillRows = skills.map((s, idx) => {
-    const sLevel = s.state.level || 1;
-    const sXp = s.state.xp || 0;
-    const sReq = getRequiredSkillXp(sLevel);
-    const sPct = calculateProgressPercent(sXp, sReq);
-    const yPos = 210 + (idx * 52);
+  const skillCards = skills.map((s, index) => {
+    const x = 50 + (index % 2) * 360;
+    const y = 260 + Math.floor(index / 2) * 105;
+    const skLevel = s.data.level || 1;
+    const skXp = s.data.xp || 0;
+    const reqXp = getRequiredSkillXp(skLevel);
+    const skPercent = calculateProgressPercent(skXp, reqXp);
 
     return `
-      <g transform="translate(420, ${yPos})">
-        <text x="0" y="16" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#f1f5f9">${s.emoji} ${escapeSvg(s.name)}</text>
-        <text x="320" y="16" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="end">Lv ${sLevel}</text>
-        <rect x="0" y="24" width="320" height="8" fill="#1e293b" rx="4" />
-        <rect x="0" y="24" width="${Math.round((sPct / 100) * 320)}" height="8" fill="url(#barGradient)" rx="4" />
+      <g transform="translate(${x}, ${y})">
+        <rect width="340" height="90" fill="url(#glassPanel)" rx="12" stroke="#334155" stroke-width="1" />
+        <circle cx="45" cy="45" r="25" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
+        <text x="45" y="52" font-family="sans-serif" font-size="20" text-anchor="middle">${s.icon}</text>
+        <text x="85" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="700" fill="#f8fafc">${s.name}</text>
+        <text x="315" y="38" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#38bdf8" text-anchor="end">Lv ${skLevel}</text>
+        <rect x="85" y="52" width="230" height="8" fill="#0f172a" rx="4" />
+        <rect x="85" y="52" width="${Math.round((skPercent / 100) * 230)}" height="8" fill="url(#barGradient)" rx="4" />
+        <text x="85" y="74" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="500" fill="#94a3b8">XP: ${formatNumber(skXp)} / ${formatNumber(reqXp)} (${skPercent}%)</text>
       </g>
     `;
   }).join('');
@@ -111,32 +115,28 @@ export function generateProfileSvg(user = {}) {
       <rect width="800" height="500" fill="url(#bgGradient)" rx="24" />
       <rect x="2" y="2" width="796" height="496" fill="none" stroke="url(#goldBorder)" stroke-width="3" rx="22" opacity="0.8" />
 
-      <!-- Header -->
-      <text x="50" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="900" fill="#f8fafc" letter-spacing="2">CHARACTER PROFILE</text>
-      <text x="750" y="55" font-family="'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="800" fill="#facc15" text-anchor="end">🪙 ${coins} Coins</text>
+      <!-- Top Identity Header -->
+      <rect x="40" y="30" width="720" height="195" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
+      <circle cx="110" cy="110" r="48" fill="#312e81" stroke="#f59e0b" stroke-width="3" />
+      <text x="110" y="122" font-family="sans-serif" font-size="38" text-anchor="middle">👑</text>
 
-      <!-- Left Hero Card -->
-      <rect x="40" y="85" width="340" height="380" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
-      <circle cx="210" cy="170" r="55" fill="#312e81" stroke="#f59e0b" stroke-width="4" />
-      <text x="210" y="185" font-family="sans-serif" font-size="44" text-anchor="middle">🧙‍♂️</text>
+      <text x="180" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="900" fill="#f8fafc">${truncateText(username, 16)}</text>
+      <text x="180" y="120" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#fde68a">${truncateText(title, 24)}</text>
+      <text x="180" y="150" font-family="'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" fill="#facc15">🪙 ${coins} Coins</text>
 
-      <text x="210" y="260" font-family="'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" fill="#f8fafc" text-anchor="middle">${truncateText(username, 16)}</text>
-      <text x="210" y="285" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="700" fill="#fbbf24" text-anchor="middle">👑 ${truncateText(title, 20)}</text>
+      <!-- Overall Level & Progress -->
+      <rect x="520" y="55" width="220" height="140" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#334155" stroke-width="1" />
+      <text x="630" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="middle">HERO MASTERY</text>
+      <text x="630" y="128" font-family="'Segoe UI', Roboto, sans-serif" font-size="34" font-weight="900" fill="#38bdf8" text-anchor="middle">Lv ${level}</text>
+      <rect x="540" y="148" width="180" height="8" fill="#1e293b" rx="4" />
+      <rect x="540" y="148" width="${Math.round((playerPercent / 100) * 180)}" height="8" fill="url(#barGradient)" rx="4" />
+      <text x="630" y="172" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1" text-anchor="middle">XP: ${formatNumber(currentXp)} / ${formatNumber(requiredXp)}</text>
 
-      <!-- Player Level & XP Bar -->
-      <rect x="70" y="325" width="280" height="110" fill="#0f172a" fill-opacity="0.7" rx="12" stroke="#334155" stroke-width="1" />
-      <text x="90" y="355" font-family="'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="800" fill="#38bdf8">Player Level ${level}</text>
-      <text x="330" y="355" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#94a3b8" text-anchor="end">${currentXp} / ${requiredXp} XP</text>
-      <rect x="90" y="375" width="240" height="12" fill="#1e293b" rx="6" />
-      <rect x="90" y="375" width="${Math.round((playerPercent / 100) * 240)}" height="12" fill="url(#goldBar)" rx="6" />
-      <text x="210" y="415" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#94a3b8" text-anchor="middle">${playerPercent}% To Next Level</text>
+      <!-- Skills Grid Section Title -->
+      <text x="50" y="248" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#94a3b8" letter-spacing="1">REALM CRAFTS &amp; GATHERING PROFICIENCIES</text>
 
-      <!-- Right Skill Masteries Panel -->
-      <rect x="400" y="85" width="360" height="380" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
-      <text x="425" y="125" font-family="'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="800" fill="#f8fafc" letter-spacing="1">SKILL MASTERIES</text>
-      <text x="425" y="150" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500" fill="#94a3b8">Independent realm craft disciplines</text>
-
-      ${skillRows}
+      <!-- Skills Matrix -->
+      ${skillCards}
     </svg>
   `;
 }
@@ -149,41 +149,44 @@ export function generateProfileSvg(user = {}) {
  */
 export function generateInventorySvg(user = {}, page = 1) {
   const username = user.username ? `@${escapeSvg(user.username)}` : escapeSvg(user.firstName || 'Adventurer');
-  const items = Array.isArray(user.inventory) ? user.inventory : [];
+  const inventory = Array.isArray(user.inventory) ? user.inventory : [];
   const tools = Array.isArray(user.tools) ? user.tools : [];
+
   const allSlots = [
-    ...tools.map(t => ({ name: t.toolId.replace(/_/g, ' '), emoji: '🛠️', quantity: `T${t.tier}`, isTool: true })),
-    ...items.map(i => ({ name: i.itemId.replace(/_/g, ' '), emoji: '📦', quantity: `x${i.quantity}`, isTool: false }))
+    ...tools.map(t => ({ name: t.toolType || 'Tool', qty: `T${t.tier}`, icon: '⚒️', sub: `${t.durability}/${t.maxDurability} Dur` })),
+    ...inventory.map(i => ({ name: i.itemId.replace(/_/g, ' '), qty: `x${i.quantity}`, icon: '📦', sub: 'Resource' }))
   ];
 
   const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(allSlots.length / pageSize));
-  const currentPage = Math.min(totalPages, Math.max(1, page));
-  const visible = allSlots.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const currentPage = Math.min(Math.max(1, page), totalPages);
+  const offset = (currentPage - 1) * pageSize;
+  const currentSlots = allSlots.slice(offset, offset + pageSize);
 
   const gridSlots = [];
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < pageSize; i++) {
     const col = i % 4;
     const row = Math.floor(i / 4);
-    const x = 50 + (col * 180);
-    const y = 110 + (row * 145);
-    const item = visible[i];
+    const x = 50 + col * 180;
+    const y = 90 + row * 140;
+    const slot = currentSlots[i];
 
-    if (item) {
+    if (slot) {
       gridSlots.push(`
         <g transform="translate(${x}, ${y})">
-          <rect width="160" height="130" fill="url(#glassPanel)" rx="12" stroke="${item.isTool ? '#f59e0b' : '#38bdf8'}" stroke-width="1.5" />
-          <circle cx="80" cy="50" r="28" fill="#1e293b" />
-          <text x="80" y="60" font-family="sans-serif" font-size="28" text-anchor="middle">${item.emoji}</text>
-          <text x="80" y="96" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">${truncateText(item.name, 12)}</text>
-          <text x="80" y="116" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="800" fill="${item.isTool ? '#facc15' : '#38bdf8'}" text-anchor="middle">${item.quantity}</text>
+          <rect width="165" height="125" fill="url(#glassPanel)" rx="12" stroke="#334155" stroke-width="1.5" />
+          <circle cx="82" cy="40" r="22" fill="#1e293b" stroke="#64748b" stroke-width="1" />
+          <text x="82" y="47" font-family="sans-serif" font-size="18" text-anchor="middle">${slot.icon}</text>
+          <text x="82" y="78" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#f8fafc" text-anchor="middle">${truncateText(slot.name, 14)}</text>
+          <text x="82" y="96" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#38bdf8" text-anchor="middle">${slot.qty}</text>
+          <text x="82" y="112" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">${slot.sub}</text>
         </g>
       `);
     } else {
       gridSlots.push(`
         <g transform="translate(${x}, ${y})">
-          <rect width="160" height="130" fill="#0f172a" fill-opacity="0.4" rx="12" stroke="#334155" stroke-width="1" stroke-dasharray="4" />
-          <text x="80" y="72" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="500" fill="#475569" text-anchor="middle">Empty Slot</text>
+          <rect width="165" height="125" fill="#0f172a" fill-opacity="0.4" rx="12" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+          <text x="82" y="68" font-family="'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">Empty Slot</text>
         </g>
       `);
     }
@@ -258,9 +261,292 @@ export function generateLeaderboardSvg(leaderboardData = []) {
   `;
 }
 
+/**
+ * 5. Category Card 1: Gathering & Harvest (800x400)
+ * @param {Object} user
+ * @returns {string} SVG String
+ */
+export function generateGatheringCategorySvg(user = {}) {
+  const woodLvl = user?.skills?.woodcutting?.level || 1;
+  const mineLvl = user?.skills?.mining?.level || 1;
+  const fishLvl = user?.skills?.fishing?.level || 1;
+
+  return `
+    <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+      ${getCommonSvgDefs()}
+      <rect width="800" height="400" fill="url(#bgGradient)" rx="24" />
+      <rect x="2" y="2" width="796" height="396" fill="none" stroke="url(#goldBorder)" stroke-width="3" rx="22" opacity="0.8" />
+
+      <!-- Main Category Banner Header -->
+      <text x="400" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="900" fill="#4ade80" text-anchor="middle" letter-spacing="3">🌲 GATHERING &amp; HARVEST</text>
+      <text x="400" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#fde68a" text-anchor="middle" letter-spacing="2">Explore • Gather • Discover</text>
+
+      <!-- Glass Content Showcase -->
+      <rect x="40" y="115" width="720" height="200" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
+
+      <!-- 4 Gathering Biome Badges -->
+      <g transform="translate(65, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#22c55e" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#14532d" stroke="#4ade80" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🌳</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Forest</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#86efac" text-anchor="middle">Oak &amp; Birch</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/chop • Wood</text>
+      </g>
+
+      <g transform="translate(235, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#64748b" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#1e293b" stroke="#94a3b8" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🪨</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Quarry</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1" text-anchor="middle">Granite &amp; Iron</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/mine • Stone</text>
+      </g>
+
+      <g transform="translate(405, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#38bdf8" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#0c4a6e" stroke="#38bdf8" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">⛏️</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Deep Mines</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#7dd3fc" text-anchor="middle">Mithril &amp; Gold</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">Vein Delve</text>
+      </g>
+
+      <g transform="translate(575, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#06b6d4" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#164e63" stroke="#22d3ee" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🌊</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">River Rane</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#67e8f9" text-anchor="middle">Fish &amp; Relics</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/fish • Aquatic</text>
+      </g>
+
+      <!-- Footer Masteries Bar -->
+      <rect x="40" y="330" width="720" height="45" fill="#090d16" fill-opacity="0.9" rx="10" stroke="#1e293b" stroke-width="1" />
+      <text x="70" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#cbd5e1">🌲 Woodcutting Lv ${woodLvl}</text>
+      <text x="320" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#cbd5e1">⛏️ Mining Lv ${mineLvl}</text>
+      <text x="560" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#cbd5e1">🎣 Fishing Lv ${fishLvl}</text>
+    </svg>
+  `;
+}
+
+/**
+ * 6. Category Card 2: Blacksmith & Equipment (800x400)
+ * @param {Object} user
+ * @returns {string} SVG String
+ */
+export function generateBlacksmithCategorySvg(user = {}) {
+  const craftLvl = user?.skills?.crafting?.level || 1;
+
+  return `
+    <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+      ${getCommonSvgDefs()}
+      <rect width="800" height="400" fill="url(#bgGradient)" rx="24" />
+      <rect x="2" y="2" width="796" height="396" fill="none" stroke="url(#goldBorder)" stroke-width="3" rx="22" opacity="0.8" />
+
+      <!-- Main Category Banner Header -->
+      <text x="400" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="900" fill="#f97316" text-anchor="middle" letter-spacing="3">⚒️ BLACKSMITH &amp; EQUIPMENT</text>
+      <text x="400" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#fde68a" text-anchor="middle" letter-spacing="2">Craft • Repair • Upgrade</text>
+
+      <!-- Glass Content Showcase -->
+      <rect x="40" y="115" width="720" height="200" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
+
+      <!-- 5-Tier Tool Progression Pipeline -->
+      <g transform="translate(60, 135)">
+        <rect width="115" height="155" fill="#0f172a" fill-opacity="0.85" rx="10" stroke="#78350f" stroke-width="1.5" />
+        <circle cx="57" cy="40" r="22" fill="#451a03" stroke="#b45309" stroke-width="1.5" />
+        <text x="57" y="47" font-family="sans-serif" font-size="20" text-anchor="middle">🪵</text>
+        <text x="57" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f8fafc" text-anchor="middle">Tier 1</text>
+        <text x="57" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#fcd34d" text-anchor="middle">Wooden</text>
+        <text x="57" y="128" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">30 Max Dur</text>
+      </g>
+
+      <g transform="translate(195, 135)">
+        <rect width="115" height="155" fill="#0f172a" fill-opacity="0.85" rx="10" stroke="#64748b" stroke-width="1.5" />
+        <circle cx="57" cy="40" r="22" fill="#334155" stroke="#94a3b8" stroke-width="1.5" />
+        <text x="57" y="47" font-family="sans-serif" font-size="20" text-anchor="middle">🪨</text>
+        <text x="57" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f8fafc" text-anchor="middle">Tier 2</text>
+        <text x="57" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1" text-anchor="middle">Stone</text>
+        <text x="57" y="128" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">60 Max Dur</text>
+      </g>
+
+      <g transform="translate(330, 135)">
+        <rect width="115" height="155" fill="#0f172a" fill-opacity="0.85" rx="10" stroke="#38bdf8" stroke-width="1.5" />
+        <circle cx="57" cy="40" r="22" fill="#075985" stroke="#38bdf8" stroke-width="1.5" />
+        <text x="57" y="47" font-family="sans-serif" font-size="20" text-anchor="middle">⚔️</text>
+        <text x="57" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f8fafc" text-anchor="middle">Tier 3</text>
+        <text x="57" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#7dd3fc" text-anchor="middle">Iron</text>
+        <text x="57" y="128" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">120 Max Dur</text>
+      </g>
+
+      <g transform="translate(465, 135)">
+        <rect width="115" height="155" fill="#0f172a" fill-opacity="0.85" rx="10" stroke="#eab308" stroke-width="1.5" />
+        <circle cx="57" cy="40" r="22" fill="#854d0e" stroke="#facc15" stroke-width="1.5" />
+        <text x="57" y="47" font-family="sans-serif" font-size="20" text-anchor="middle">👑</text>
+        <text x="57" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f8fafc" text-anchor="middle">Tier 4</text>
+        <text x="57" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#fde047" text-anchor="middle">Gold</text>
+        <text x="57" y="128" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">240 Max Dur</text>
+      </g>
+
+      <g transform="translate(600, 135)">
+        <rect width="115" height="155" fill="#0f172a" fill-opacity="0.85" rx="10" stroke="#a855f7" stroke-width="1.5" />
+        <circle cx="57" cy="40" r="22" fill="#581c87" stroke="#c084fc" stroke-width="1.5" />
+        <text x="57" y="47" font-family="sans-serif" font-size="20" text-anchor="middle">💎</text>
+        <text x="57" y="85" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#f8fafc" text-anchor="middle">Tier 5</text>
+        <text x="57" y="105" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#e9d5ff" text-anchor="middle">Diamond</text>
+        <text x="57" y="128" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">500 Max Dur</text>
+      </g>
+
+      <!-- Footer Crafting Stats Bar -->
+      <rect x="40" y="330" width="720" height="45" fill="#090d16" fill-opacity="0.9" rx="10" stroke="#1e293b" stroke-width="1" />
+      <text x="80" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fb923c">🔨 Crafting Mastery: Lv ${craftLvl}</text>
+      <text x="700" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fde68a" text-anchor="end">🛠️ Instant Tool Repair Available</text>
+    </svg>
+  `;
+}
+
+/**
+ * 7. Category Card 3: Economy & Trading (800x400)
+ * @param {Object} user
+ * @returns {string} SVG String
+ */
+export function generateEconomyCategorySvg(user = {}) {
+  const coins = formatNumber(user?.coins || 0);
+  const invCount = user?.inventory?.length || 0;
+
+  return `
+    <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+      ${getCommonSvgDefs()}
+      <rect width="800" height="400" fill="url(#bgGradient)" rx="24" />
+      <rect x="2" y="2" width="796" height="396" fill="none" stroke="url(#goldBorder)" stroke-width="3" rx="22" opacity="0.8" />
+
+      <!-- Main Category Banner Header -->
+      <text x="400" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="900" fill="#facc15" text-anchor="middle" letter-spacing="3">🎒 ECONOMY &amp; TRADING</text>
+      <text x="400" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#fde68a" text-anchor="middle" letter-spacing="2">Trade • Sell • Gift</text>
+
+      <!-- Glass Content Showcase -->
+      <rect x="40" y="115" width="720" height="200" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
+
+      <!-- 4 Economy Pillars -->
+      <g transform="translate(65, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#f59e0b" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#78350f" stroke="#fbbf24" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🏪</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Market Hub</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#fde68a" text-anchor="middle">Global Orders</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/market</text>
+      </g>
+
+      <g transform="translate(235, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#10b981" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#064e3b" stroke="#34d399" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">💰</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Sell Items</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#a7f3d0" text-anchor="middle">List for Coins</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/sell &lt;item&gt; &lt;qty&gt;</text>
+      </g>
+
+      <g transform="translate(405, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#ec4899" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#831843" stroke="#f472b6" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🎁</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Friend Gifts</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#fbcfe8" text-anchor="middle">Share Materials</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/gift @user &lt;item&gt;</text>
+      </g>
+
+      <g transform="translate(575, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#8b5cf6" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#4c1d95" stroke="#a78bfa" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🏆</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Leaderboard</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#ddd6fe" text-anchor="middle">Realm Champions</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">Rankings</text>
+      </g>
+
+      <!-- Footer Treasury Bar -->
+      <rect x="40" y="330" width="720" height="45" fill="#090d16" fill-opacity="0.9" rx="10" stroke="#1e293b" stroke-width="1" />
+      <text x="70" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#facc15">🪙 Treasury Balance: ${coins} Coins</text>
+      <text x="710" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#94a3b8" text-anchor="end">📦 Backpack: ${invCount} Resource Stacks</text>
+    </svg>
+  `;
+}
+
+/**
+ * 8. Category Card 4: 3D Voxel Base & Multiplayer (800x400)
+ * @param {Object} user
+ * @returns {string} SVG String
+ */
+export function generateBaseCategorySvg(user = {}) {
+  const level = user?.level || 1;
+  const activePetDef = getPetDefinition(user?.activePet);
+  const petName = activePetDef ? activePetDef.name : 'No Companion';
+
+  return `
+    <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+      ${getCommonSvgDefs()}
+      <rect width="800" height="400" fill="url(#bgGradient)" rx="24" />
+      <rect x="2" y="2" width="796" height="396" fill="none" stroke="url(#goldBorder)" stroke-width="3" rx="22" opacity="0.8" />
+
+      <!-- Main Category Banner Header -->
+      <text x="400" y="60" font-family="'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="900" fill="#38bdf8" text-anchor="middle" letter-spacing="3">🏰 3D VOXEL WORLD</text>
+      <text x="400" y="90" font-family="'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="600" fill="#fde68a" text-anchor="middle" letter-spacing="2">Build • Explore • Raid</text>
+
+      <!-- Glass Content Showcase -->
+      <rect x="40" y="115" width="720" height="200" fill="url(#glassPanel)" rx="16" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1.5" />
+
+      <!-- 4 Voxel World Modules -->
+      <g transform="translate(65, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#0ea5e9" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#075985" stroke="#38bdf8" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🏗️</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">3D Voxel Base</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#7dd3fc" text-anchor="middle">10,000+ Blocks</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">Mini App Sandbox</text>
+      </g>
+
+      <g transform="translate(235, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#ef4444" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#7f1d1d" stroke="#f87171" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">⚔️</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Titan Raid</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#fca5a5" text-anchor="middle">Colossus Boss</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/boss • Group Chat</text>
+      </g>
+
+      <g transform="translate(405, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#10b981" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#064e3b" stroke="#34d399" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🗺️</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">5 Biomes</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#6ee7b7" text-anchor="middle">15 Monster AI</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">Combat Hunting</text>
+      </g>
+
+      <g transform="translate(575, 135)">
+        <rect width="145" height="160" fill="#0f172a" fill-opacity="0.8" rx="12" stroke="#a855f7" stroke-width="1.5" />
+        <circle cx="72" cy="45" r="26" fill="#581c87" stroke="#c084fc" stroke-width="2" />
+        <text x="72" y="54" font-family="sans-serif" font-size="26" text-anchor="middle">🐾</text>
+        <text x="72" y="95" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#f8fafc" text-anchor="middle">Companion</text>
+        <text x="72" y="118" font-family="'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#e9d5ff" text-anchor="middle">${truncateText(petName, 12)}</text>
+        <text x="72" y="138" font-family="'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="500" fill="#94a3b8" text-anchor="middle">/pets • Sanctuary</text>
+      </g>
+
+      <!-- Footer Multiplayer Bar -->
+      <rect x="40" y="330" width="720" height="45" fill="#090d16" fill-opacity="0.9" rx="10" stroke="#1e293b" stroke-width="1" />
+      <text x="70" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#38bdf8">👑 Hero Level: ${level}</text>
+      <text x="710" y="358" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#fde68a" text-anchor="end">🎮 Telegram Mini App Synchronized</text>
+    </svg>
+  `;
+}
+
 export default {
   generateMainMenuSvg,
   generateProfileSvg,
   generateInventorySvg,
-  generateLeaderboardSvg
+  generateLeaderboardSvg,
+  generateGatheringCategorySvg,
+  generateBlacksmithCategorySvg,
+  generateEconomyCategorySvg,
+  generateBaseCategorySvg
 };

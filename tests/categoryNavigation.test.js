@@ -9,6 +9,13 @@ import {
   renderCategoryDetailView,
   renderCommandDetailView
 } from '../src/telegram/views/helpView.js';
+import {
+  renderGatheringCard,
+  renderBlacksmithCard,
+  renderEconomyCard,
+  renderBaseCard,
+  renderCategoryCard
+} from '../src/services/cardService.js';
 import { getDynamicBannerBuffer } from '../src/telegram/commands/start.js';
 import { parseCallback } from '../src/telegram/buttons/callbackData.js';
 
@@ -17,7 +24,17 @@ const mockUser = {
   username: 'test_hero',
   firstName: 'TestHero',
   level: 5,
-  coins: 1250
+  coins: 1250,
+  skills: {
+    woodcutting: { level: 3, xp: 120 },
+    mining: { level: 4, xp: 240 },
+    crafting: { level: 2, xp: 50 },
+    fishing: { level: 1, xp: 0 }
+  },
+  inventory: [
+    { itemId: 'wood_oak', quantity: 15 },
+    { itemId: 'stone_granite', quantity: 20 }
+  ]
 };
 
 test('1. Command Guide: renderHelpView lists the 4 category commands and clean navigation', () => {
@@ -154,4 +171,31 @@ test('7. Multi-Moment Dynamic Scenery Banner: Resolves Morning, Noon, Sunset, an
   const midnightBuf = getDynamicBannerBuffer(midnightDate);
   assert.ok(Buffer.isBuffer(midnightBuf));
   assert.ok(midnightBuf.length > 100000);
+});
+
+test('8. Visual Cards: Renders 800px PNG buffers for all 4 RPG category cards', () => {
+  // 1. Gathering & Harvest
+  const gBuf = renderGatheringCard(mockUser);
+  assert.ok(Buffer.isBuffer(gBuf));
+  assert.ok(gBuf.length > 10000);
+
+  // 2. Blacksmith & Equipment
+  const bBuf = renderBlacksmithCard(mockUser);
+  assert.ok(Buffer.isBuffer(bBuf));
+  assert.ok(bBuf.length > 10000);
+
+  // 3. Economy & Trading
+  const eBuf = renderEconomyCard(mockUser);
+  assert.ok(Buffer.isBuffer(eBuf));
+  assert.ok(eBuf.length > 10000);
+
+  // 4. 3D Voxel World
+  const vBuf = renderBaseCard(mockUser);
+  assert.ok(Buffer.isBuffer(vBuf));
+  assert.ok(vBuf.length > 10000);
+
+  // Generic router
+  const routedBuf = renderCategoryCard('gatheringharvest', mockUser);
+  assert.ok(Buffer.isBuffer(routedBuf));
+  assert.ok(routedBuf.length > 10000);
 });

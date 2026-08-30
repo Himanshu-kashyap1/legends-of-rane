@@ -2,7 +2,11 @@ import {
   generateMainMenuSvg,
   generateProfileSvg,
   generateInventorySvg,
-  generateLeaderboardSvg
+  generateLeaderboardSvg,
+  generateGatheringCategorySvg,
+  generateBlacksmithCategorySvg,
+  generateEconomyCategorySvg,
+  generateBaseCategorySvg
 } from '../renderer/cardTemplates.js';
 import { renderSvgToPngBuffer } from '../renderer/cardRenderer.js';
 import { logger } from '../utils/logger.js';
@@ -46,6 +50,69 @@ export function renderInventoryCard(user, page = 1) {
 export function renderLeaderboardCard(leaderboardData) {
   const svg = generateLeaderboardSvg(leaderboardData);
   return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+}
+
+/**
+ * 1. Renders Gathering & Harvest PNG Card buffer (800x400).
+ * @param {Object} user
+ * @returns {Buffer}
+ */
+export function renderGatheringCard(user) {
+  const svg = generateGatheringCategorySvg(user);
+  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+}
+
+/**
+ * 2. Renders Blacksmith & Equipment PNG Card buffer (800x400).
+ * @param {Object} user
+ * @returns {Buffer}
+ */
+export function renderBlacksmithCard(user) {
+  const svg = generateBlacksmithCategorySvg(user);
+  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+}
+
+/**
+ * 3. Renders Economy & Trading PNG Card buffer (800x400).
+ * @param {Object} user
+ * @returns {Buffer}
+ */
+export function renderEconomyCard(user) {
+  const svg = generateEconomyCategorySvg(user);
+  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+}
+
+/**
+ * 4. Renders 3D Voxel Base & Multiplayer PNG Card buffer (800x400).
+ * @param {Object} user
+ * @returns {Buffer}
+ */
+export function renderBaseCard(user) {
+  const svg = generateBaseCategorySvg(user);
+  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+}
+
+/**
+ * Generic Category Card Renderer
+ * @param {string} categoryKey
+ * @param {Object} user
+ * @returns {Buffer|null}
+ */
+export function renderCategoryCard(categoryKey, user) {
+  const key = String(categoryKey || '').toLowerCase();
+  if (['gathering', 'gatheringharvest', 'harvest'].includes(key)) {
+    return renderGatheringCard(user);
+  }
+  if (['blacksmith', 'blacksmithequipment', 'equipment'].includes(key)) {
+    return renderBlacksmithCard(user);
+  }
+  if (['economy', 'economytrading', 'trading'].includes(key)) {
+    return renderEconomyCard(user);
+  }
+  if (['base', '3dvoxelbasemultiplayer', 'voxel'].includes(key)) {
+    return renderBaseCard(user);
+  }
+  return null;
 }
 
 /**
@@ -93,5 +160,10 @@ export default {
   renderProfileCard,
   renderInventoryCard,
   renderLeaderboardCard,
+  renderGatheringCard,
+  renderBlacksmithCard,
+  renderEconomyCard,
+  renderBaseCard,
+  renderCategoryCard,
   sendOrEditCardMessage
 };
