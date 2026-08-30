@@ -2,6 +2,7 @@ import { Markup } from 'telegraf';
 import { loadPlayerBase } from '../../engine/voxel/baseEngine.js';
 import { config } from '../../config/env.js';
 import { encodeCallback } from '../buttons/callbackData.js';
+import { logger } from '../../utils/logger.js';
 
 /**
  * /base and /build command handler
@@ -49,12 +50,23 @@ export async function handleBaseCommand(ctx) {
   const keyboard = Markup.inlineKeyboard(buttons);
   const fullText = textLines.join('\n');
 
-  if (ctx.callbackQuery) {
-    await ctx.editMessageText(fullText, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
+  try {
+    if (ctx.callbackQuery) {
+      await ctx.answerCbQuery().catch(() => {});
+      if (ctx.callbackQuery.message?.photo) {
+        await ctx.deleteMessage().catch(() => {});
+        await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
+      } else {
+        await ctx.editMessageText(fullText, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
+          await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
+        });
+      }
+    } else {
       await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
-    });
-  } else {
-    await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
+    }
+  } catch (err) {
+    logger.warn('Failed to send base view in Markdown mode, falling back to plain text:', err?.message);
+    await ctx.reply(fullText.replace(/[*_`]/g, ''), keyboard).catch(() => {});
   }
 }
 
