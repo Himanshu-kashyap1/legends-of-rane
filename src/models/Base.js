@@ -13,7 +13,7 @@ const VoxelBlockSchema = new mongoose.Schema({
   y: {
     type: Number,
     required: true,
-    min: [0, 'Y coordinate cannot be negative'],
+    min: [-8, 'Y coordinate cannot be less than -8'],
     max: [32, 'Y coordinate cannot exceed 32']
   },
   z: {

@@ -44,7 +44,7 @@ test('2. Coordinate validation respects world boundaries', () => {
   // Out of bounds
   assert.strictEqual(areCoordinatesValid(17, 0, 0), false);
   assert.strictEqual(areCoordinatesValid(0, 25, 0), false);
-  assert.strictEqual(areCoordinatesValid(0, -1, 0), false);
+  assert.strictEqual(areCoordinatesValid(0, -9, 0), false);
   assert.strictEqual(areCoordinatesValid(0.5, 0, 0), false); // Non-integer
 });
 
@@ -55,8 +55,8 @@ test('3. Initial base load auto-initializes starter foundation', async () => {
   const loadRes = await loadPlayerBase(telegramId);
   assert.strictEqual(loadRes.success, true);
   assert.strictEqual(loadRes.base.telegramId, telegramId);
-  assert.strictEqual(loadRes.base.blockCount, 26); // 25 grass (5x5) + 1 lantern
-  assert.ok(loadRes.base.blocks.find(b => b.blockType === 'decor_lantern'));
+  assert.strictEqual(loadRes.base.blockCount, 102); // 4 deep layers (4x25) + 2 altar blocks
+  assert.ok(loadRes.base.blocks.find(b => b.blockType === 'holy_crystal'));
 });
 
 test('4, 5. Single block placement, coordinate replacement, and destruction', async () => {

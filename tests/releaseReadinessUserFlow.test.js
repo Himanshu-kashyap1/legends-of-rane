@@ -68,14 +68,14 @@ test('RELEASE QA 1: Complete New User Onboarding Flow', async () => {
   assert.strictEqual(user.level, 1);
   assert.strictEqual(user.tools.length, 2);
 
-  // 2. /start Main Menu View (6 buttons)
+  // 2. /start Main Menu View (2 buttons: Add Me and Commands Info)
   const menu = renderMainMenu(user);
   assert.ok(menu.text.includes('Arthur') || menu.text.includes('legend_novice'));
-  assert.strictEqual(menu.keyboard.reply_markup.inline_keyboard.flat().length, 6);
+  assert.strictEqual(menu.keyboard.reply_markup.inline_keyboard.flat().length, 2);
 
   // 3. /profile View
   const profile = renderProfile(user);
-  assert.ok(profile.text.includes('CHARACTER PROFILE'));
+  assert.ok(profile.text.includes('HERO STATUS') || profile.text.includes('CHARACTER PROFILE'));
   assert.ok(profile.text.includes('Level 1'));
 
   // 4. /explore & Gather
@@ -108,6 +108,7 @@ test('RELEASE QA 1: Complete New User Onboarding Flow', async () => {
   user.coins = 500;
   const adoptRes = await adoptPet({ user, petId: 'pet_timber_wolf' });
   assert.strictEqual(adoptRes.success, true);
+  await user.save();
   const petView = renderPetsHub(user);
   assert.ok(petView.text.includes('PET'));
 

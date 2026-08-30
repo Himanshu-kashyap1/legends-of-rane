@@ -86,20 +86,11 @@ export function addPlayerXp(user, xpAmount) {
       coinsBonus += levelReward;
       user.coins = (user.coins || 0) + levelReward;
 
-      // Refill energy on level up
-      if (user.energy) {
-        user.energy.current = user.energy.max || 100;
-        user.energy.lastRegen = new Date();
-      }
-
       logger.info(`Player ${user.telegramId} reached Level ${user.level}! (+${levelReward} coins bonus)`);
     } else {
       break;
     }
   }
-
-  // Check and award newly eligible titles
-  const newTitlesUnlocked = syncTitles(user);
 
   return {
     success: true,
@@ -109,7 +100,7 @@ export function addPlayerXp(user, xpAmount) {
     newLevel: user.level,
     levelsGained,
     coinsBonus,
-    newTitlesUnlocked
+    newTitlesUnlocked: []
   };
 }
 
@@ -174,34 +165,12 @@ export function addSkillXp(user, skillName, xpAmount) {
 }
 
 /**
- * Checks eligible titles and unlocks new ones.
+ * Legacy Title sync stub (Titles system removed).
  * @param {Object} user
- * @returns {string[]} List of newly unlocked title names
+ * @returns {string[]}
  */
 export function syncTitles(user) {
-  if (!user) return [];
-  user.unlockedTitles = Array.isArray(user.unlockedTitles) && user.unlockedTitles.length > 0
-    ? user.unlockedTitles
-    : ['Novice Adventurer'];
-
-  const eligibleTitles = checkEligibleTitles(user);
-  const newlyUnlocked = [];
-
-  for (const tName of eligibleTitles) {
-    if (!user.unlockedTitles.includes(tName)) {
-      user.unlockedTitles.push(tName);
-      newlyUnlocked.push(tName);
-      logger.info(`Player ${user.telegramId} unlocked Title: [${tName}]!`);
-    }
-  }
-
-  // Update active title if current is default
-  if (!user.title || user.title === 'Novice Adventurer') {
-    const highestTitle = user.unlockedTitles[user.unlockedTitles.length - 1];
-    if (highestTitle) user.title = highestTitle;
-  }
-
-  return newlyUnlocked;
+  return [];
 }
 
 export default {

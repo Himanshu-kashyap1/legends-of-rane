@@ -152,6 +152,14 @@ registerCallback('nav_help', async (ctx) => {
   await ctx.answerCbQuery().catch(() => {});
 });
 
+// Close View (Clean Message Termination)
+registerCallback('nav_close', async (ctx) => {
+  try {
+    await ctx.deleteMessage().catch(() => {});
+  } catch (_) {}
+  await ctx.answerCbQuery('Closed').catch(() => {});
+});
+
 // Navigate to Profile
 registerCallback('nav_profile', async (ctx) => {
   const user = ctx.state.user;

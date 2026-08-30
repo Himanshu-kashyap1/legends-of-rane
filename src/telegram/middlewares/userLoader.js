@@ -17,12 +17,6 @@ export function getNewPlayerDefaults(from) {
     coins: 100,
     level: 1,
     xp: 0,
-    title: 'Novice Adventurer',
-    energy: {
-      current: 100,
-      max: 100,
-      lastRegen: new Date()
-    },
     skills: {
       woodcutting: { level: 1, xp: 0 },
       mining: { level: 1, xp: 0 },

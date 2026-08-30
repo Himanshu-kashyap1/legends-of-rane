@@ -76,7 +76,8 @@ export async function renderInventory(user, page = 1) {
   // Compact Action Row
   buttons.push([
     Markup.button.callback('🏪 Market', encodeCallback({ action: 'nav_market', ownerId })),
-    Markup.button.callback('🏠 Main Menu', encodeCallback({ action: 'nav_main', ownerId }))
+    Markup.button.callback('🔙 Back', encodeCallback({ action: 'nav_help', ownerId })),
+    Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
   ]);
 
   const keyboard = Markup.inlineKeyboard(buttons);

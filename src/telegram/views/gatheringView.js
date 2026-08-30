@@ -45,7 +45,8 @@ export function renderExploreMenu(user) {
     ],
     [
       Markup.button.callback('💎 Deep Mines', encodeCallback({ action: 'explore_zone', ownerId, targetId: 'zone_mines' })),
-      Markup.button.callback('🏠 Main Menu', encodeCallback({ action: 'nav_main', ownerId }))
+      Markup.button.callback('🔙 Back', encodeCallback({ action: 'nav_help', ownerId })),
+      Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
     ]
   ]);
 

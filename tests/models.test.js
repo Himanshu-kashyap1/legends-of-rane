@@ -24,7 +24,6 @@ test('Models: User schema validates required fields and default structures', () 
   assert.strictEqual(user.telegramId, '987654321');
   assert.strictEqual(user.coins, 100);
   assert.strictEqual(user.level, 1);
-  assert.strictEqual(user.energy.current, 100);
   assert.strictEqual(user.skills.woodcutting.level, 1);
   assert.strictEqual(user.skills.mining.level, 1);
   assert.strictEqual(user.skills.crafting.level, 1);
@@ -44,7 +43,6 @@ test('Models: User schema prevents negative coins and negative durability', () =
   const invalidUser = new User({
     telegramId: '111222',
     coins: -50,
-    energy: { current: -10, max: 100 },
     tools: [
       {
         toolId: 'tool_axe_wood',
@@ -59,7 +57,6 @@ test('Models: User schema prevents negative coins and negative durability', () =
   const err = invalidUser.validateSync();
   assert.ok(err);
   assert.ok(err.errors['coins']);
-  assert.ok(err.errors['energy.current']);
   assert.ok(err.errors['tools.0.durability']);
 });
 

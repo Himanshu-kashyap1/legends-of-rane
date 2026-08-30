@@ -1,7 +1,7 @@
 import { handleStartCommand } from './start.js';
 import { handleProfileCommand } from './profile.js';
 import { handleInventoryCommand } from './inventory.js';
-import { handleExploreCommand } from './explore.js';
+import { handleExploreCommand, handleChopCommand, handleMineCommand } from './explore.js';
 import { handleToolsCommand } from './tools.js';
 import { handleWorkshopCommand } from './craft.js';
 import { handleMarketCommand, handleSellCommand } from './market.js';
@@ -22,8 +22,10 @@ export function registerCommands(bot) {
   // Core Gameplay Commands (Active)
   bot.command('start', handleStartCommand);
   bot.command('profile', handleProfileCommand);
-  bot.command(['inventory', 'backpack'], handleInventoryCommand);
+  bot.command(['inventory', 'backpack', 'bag'], handleInventoryCommand);
   bot.command(['explore', 'gather'], handleExploreCommand);
+  bot.command('chop', handleChopCommand);
+  bot.command('mine', handleMineCommand);
   bot.command('tools', handleToolsCommand);
   bot.command(['craft', 'workshop'], handleWorkshopCommand);
   bot.command('market', handleMarketCommand);

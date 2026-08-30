@@ -48,7 +48,6 @@ test('1, 2, 3. /start creates a new player, displays correct info, and preserves
   // 2. Render Main Menu
   const { text } = renderMainMenu(ctx.state.user);
   assert.ok(text.includes('Arthur') || text.includes('legend_hero'));
-  assert.ok(text.includes('Novice Adventurer'));
   assert.ok(text.includes('100')); // 100 coins
   assert.ok(text.includes('Level'));
 
@@ -123,7 +122,6 @@ test('9, 10, 11. Profile displays all five masteries, coins, and energy', () => 
 
   const { text } = renderProfile(mockUser);
   assert.ok(text.includes('750 Coins'));
-  assert.ok(text.includes('95 / 100'));
   assert.ok(text.includes('Woodcutting'));
   assert.ok(text.includes('Mining'));
   assert.ok(text.includes('Crafting'));

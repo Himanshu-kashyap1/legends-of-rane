@@ -24,8 +24,8 @@ const state = {
   selectedBlockId: 'grass',
   hotbarSlotIdx: 0,
   hotbarSlots: [
-    'grass', 'dirt', 'wood_oak_plank', 'wood_oak_log',
-    'smooth_stone', 'stone_brick', 'ore_gold', 'ore_diamond', 'decor_lantern'
+    'grass', 'dirt', 'smooth_stone', 'deepslate',
+    'bedrock', 'ore_gold', 'ore_diamond', 'holy_crystal', 'decor_lantern'
   ],
   blockCatalog: {},
   blockCategories: {},
@@ -122,36 +122,67 @@ controls.dampingFactor = 0.08;
 controls.maxPolarAngle = Math.PI / 2 + 0.05;
 controls.minDistance = 4;
 controls.maxDistance = 65;
-controls.target.set(0, 2, 0);
+controls.target.set(0, 0, 0);
 
-// Lighting
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+// Lighting & Holy Atmosphere
+scene.fog = new THREE.FogExp2(0x0f172a, 0.012);
+
+const ambientLight = new THREE.AmbientLight(0xffedd5, 0.7);
 scene.add(ambientLight);
 
-const sunLight = new THREE.DirectionalLight(0xfff7ed, 0.85);
-sunLight.position.set(20, 40, 20);
+const sunLight = new THREE.DirectionalLight(0xfef08a, 1.1);
+sunLight.position.set(24, 45, 24);
 sunLight.castShadow = true;
 sunLight.shadow.mapSize.width = 1024;
 sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
-// Ground Plane Grid (32x32)
-const gridHelper = new THREE.GridHelper(32, 32, 0x38bdf8, 0x334155);
-gridHelper.position.y = -0.5;
+// Holy Center Sanctuary Glow
+const sanctuaryPoint = new THREE.PointLight(0xfacc15, 1.4, 25);
+sanctuaryPoint.position.set(0, 3, 0);
+scene.add(sanctuaryPoint);
+
+// Deep Subterranean Ground Plane Grid (Y = -3.5)
+const gridHelper = new THREE.GridHelper(32, 32, 0xfacc15, 0x1e293b);
+gridHelper.position.y = -3.5;
 scene.add(gridHelper);
 
-// Invisible Raycast Plane at Y = 0
+// Invisible Raycast Plane at Deep Foundation Y = -3.5
 const planeGeo = new THREE.PlaneGeometry(32, 32);
 planeGeo.rotateX(-Math.PI / 2);
 const planeMat = new THREE.MeshBasicMaterial({ visible: false });
 const groundRaycastPlane = new THREE.Mesh(planeGeo, planeMat);
-groundRaycastPlane.position.y = -0.5;
+groundRaycastPlane.position.y = -3.5;
 scene.add(groundRaycastPlane);
+
+// Holy Floating Shimmering Spark Particles
+const particleCount = 140;
+const particleGeo = new THREE.BufferGeometry();
+const particlePos = new Float32Array(particleCount * 3);
+const particleSpeeds = new Float32Array(particleCount);
+
+for (let i = 0; i < particleCount; i++) {
+  particlePos[i * 3] = (Math.random() - 0.5) * 26;
+  particlePos[i * 3 + 1] = Math.random() * 14 - 3;
+  particlePos[i * 3 + 2] = (Math.random() - 0.5) * 26;
+  particleSpeeds[i] = 0.008 + Math.random() * 0.018;
+}
+
+particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+const particleMat = new THREE.PointsMaterial({
+  color: 0xfef08a,
+  size: 0.3,
+  transparent: true,
+  opacity: 0.8,
+  blending: THREE.AdditiveBlending
+});
+const holyParticles = new THREE.Points(particleGeo, particleMat);
+scene.add(holyParticles);
 
 // Selection Highlight Box
 const highlightBox = new THREE.LineSegments(
   new THREE.EdgesGeometry(new THREE.BoxGeometry(1.02, 1.02, 1.02)),
-  new THREE.LineBasicMaterial({ color: 0xfacc15, linewidth: 2 })
+  new THREE.LineBasicMaterial({ color: 0xfde047, linewidth: 2 })
 );
 highlightBox.visible = false;
 scene.add(highlightBox);
@@ -664,6 +695,20 @@ function setupEventListeners() {
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+
+  // Shimmering Holy Sanctuary Particles Motion
+  if (holyParticles && holyParticles.geometry) {
+    const pos = holyParticles.geometry.attributes.position.array;
+    for (let i = 0; i < particleCount; i++) {
+      pos[i * 3 + 1] += particleSpeeds[i];
+      if (pos[i * 3 + 1] > 11) {
+        pos[i * 3 + 1] = -3.5;
+      }
+    }
+    holyParticles.geometry.attributes.position.needsUpdate = true;
+    holyParticles.rotation.y += 0.0008;
+  }
+
   renderer.render(scene, camera);
 }
 

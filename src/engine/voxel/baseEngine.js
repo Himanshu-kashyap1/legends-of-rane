@@ -13,14 +13,34 @@ import { logger } from '../../utils/logger.js';
  */
 export function getDefaultStarterBlocks() {
   const starterBlocks = [];
-  // 5x5 Grass platform at y = 0
+  // Layer y = -3: Bedrock (5x5)
+  for (let x = -2; x <= 2; x++) {
+    for (let z = -2; z <= 2; z++) {
+      starterBlocks.push({ x, y: -3, z, blockType: 'bedrock' });
+    }
+  }
+  // Layer y = -2: Deepslate & Ores (5x5)
+  for (let x = -2; x <= 2; x++) {
+    for (let z = -2; z <= 2; z++) {
+      const type = (x === 0 && z === 0) ? 'ore_diamond' : ((Math.abs(x) + Math.abs(z) === 2) ? 'ore_gold' : 'deepslate');
+      starterBlocks.push({ x, y: -2, z, blockType: type });
+    }
+  }
+  // Layer y = -1: Solid Granite & Stone (5x5)
+  for (let x = -2; x <= 2; x++) {
+    for (let z = -2; z <= 2; z++) {
+      starterBlocks.push({ x, y: -1, z, blockType: 'smooth_stone' });
+    }
+  }
+  // Layer y = 0: Holy Sanctuary Grass Platform (5x5)
   for (let x = -2; x <= 2; x++) {
     for (let z = -2; z <= 2; z++) {
       starterBlocks.push({ x, y: 0, z, blockType: 'grass' });
     }
   }
-  // Center glowing lantern at y = 1
-  starterBlocks.push({ x: 0, y: 1, z: 0, blockType: 'decor_lantern' });
+  // Holy Center Altar & Lantern at y = 1, 2
+  starterBlocks.push({ x: 0, y: 1, z: 0, blockType: 'stone_brick' });
+  starterBlocks.push({ x: 0, y: 2, z: 0, blockType: 'holy_crystal' });
   return starterBlocks;
 }
 

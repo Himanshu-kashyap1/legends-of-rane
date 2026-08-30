@@ -178,31 +178,6 @@ const UserSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
-  title: {
-    type: String,
-    default: 'Novice Adventurer',
-    trim: true
-  },
-  unlockedTitles: {
-    type: [String],
-    default: ['Novice Adventurer']
-  },
-  energy: {
-    current: {
-      type: Number,
-      default: 100,
-      min: [0, 'Energy cannot be negative']
-    },
-    max: {
-      type: Number,
-      default: 100,
-      min: 10
-    },
-    lastRegen: {
-      type: Date,
-      default: Date.now
-    }
-  },
   skills: {
     woodcutting: { type: SkillProgressSchema, default: () => ({ level: 1, xp: 0 }) },
     mining: { type: SkillProgressSchema, default: () => ({ level: 1, xp: 0 }) },

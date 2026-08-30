@@ -5,7 +5,7 @@
 export const WORLD_CONFIG = {
   MIN_X: -16,
   MAX_X: 16,
-  MIN_Y: 0,
+  MIN_Y: -8,
   MAX_Y: 24,
   MIN_Z: -16,
   MAX_Z: 16,
@@ -22,6 +22,36 @@ export const BLOCK_CATEGORIES = {
 };
 
 export const BLOCK_CATALOG = {
+  // Deep Subterranean & Sacred
+  bedrock: {
+    id: 'bedrock',
+    name: 'Bedrock Foundation',
+    category: BLOCK_CATEGORIES.BUILDING,
+    emoji: '⬛',
+    color: '#0f172a',
+    roughness: 0.95,
+    metalness: 0.2
+  },
+  deepslate: {
+    id: 'deepslate',
+    name: 'Deepslate',
+    category: BLOCK_CATEGORIES.BUILDING,
+    emoji: '🗿',
+    color: '#1e293b',
+    roughness: 0.85,
+    metalness: 0.1
+  },
+  holy_crystal: {
+    id: 'holy_crystal',
+    name: 'Holy Sanctuary Crystal',
+    category: BLOCK_CATEGORIES.DECOR,
+    emoji: '✨',
+    color: '#fef08a',
+    emissive: '#facc15',
+    emissiveIntensity: 0.6,
+    roughness: 0.2,
+    metalness: 0.3
+  },
   // 1. Nature & Earth
   grass: {
     id: 'grass',

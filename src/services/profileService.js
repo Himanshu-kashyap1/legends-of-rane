@@ -53,7 +53,6 @@ export function getPlayerProfileData(user) {
   return {
     telegramId: user.telegramId,
     name,
-    title: user.title || 'Novice Adventurer',
     level,
     xp: currentXp,
     requiredXp,
@@ -61,10 +60,6 @@ export function getPlayerProfileData(user) {
     progressBar: playerProgressBar,
     coins: user.coins || 0,
     formattedCoins: formatNumber(user.coins || 0),
-    energy: {
-      current: user.energy?.current ?? 100,
-      max: user.energy?.max ?? 100
-    },
     skills: skillsData,
     stats: user.statistics || {}
   };
