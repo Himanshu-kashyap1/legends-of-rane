@@ -12,8 +12,13 @@ export async function handleBaseCommand(ctx) {
   const user = ctx.state.user;
   const ownerId = String(user?.telegramId || '0');
 
-  const { base } = await loadPlayerBase(ownerId);
-  const blockCount = base?.blockCount || 0;
+  let blockCount = 0;
+  try {
+    const { base } = await loadPlayerBase(ownerId);
+    blockCount = base?.blockCount || 0;
+  } catch (err) {
+    logger.warn('Could not load base block count for view:', err?.message);
+  }
 
   const webAppUrl = `${config.WEBAPP_URL}?user=${ownerId}`;
   const isHttps = Boolean(config.WEBAPP_URL && config.WEBAPP_URL.startsWith('https://'));
@@ -31,14 +36,14 @@ export async function handleBaseCommand(ctx) {
 
   const buttons = [];
   if (isHttps) {
-    textLines.push(`Tap the button below to launch the 3D Mini App directly in Telegram:`);
+    textLines.push(`Tap below to launch your 3D Base:`);
     buttons.push([
-      Markup.button.webApp('🏗️ Open 3D Base', webAppUrl)
+      Markup.button.url('🏗️ Open 3D Base', webAppUrl)
     ]);
   } else {
     textLines.push(
       `🌐 *3D Mini App Link:*`,
-      `\`${webAppUrl}\``
+      `[Click to Open 3D Base](${webAppUrl})`
     );
   }
 
@@ -53,9 +58,11 @@ export async function handleBaseCommand(ctx) {
   try {
     if (ctx.callbackQuery) {
       await ctx.answerCbQuery().catch(() => {});
+      
       if (ctx.callbackQuery.message?.photo) {
-        await ctx.deleteMessage().catch(() => {});
+        // Safe photo handling: reply first, then remove old banner
         await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
+        await ctx.deleteMessage().catch(() => {});
       } else {
         await ctx.editMessageText(fullText, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
           await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
@@ -65,8 +72,12 @@ export async function handleBaseCommand(ctx) {
       await ctx.reply(fullText, { parse_mode: 'Markdown', ...keyboard });
     }
   } catch (err) {
-    logger.warn('Failed to send base view in Markdown mode, falling back to plain text:', err?.message);
-    await ctx.reply(fullText.replace(/[*_`]/g, ''), keyboard).catch(() => {});
+    logger.warn('Failed to send base view, falling back to plain text:', err?.message);
+    try {
+      await ctx.reply(fullText.replace(/[*_`]/g, ''), keyboard);
+    } catch (fallbackErr) {
+      logger.error('Base view delivery failed completely:', fallbackErr);
+    }
   }
 }
 
