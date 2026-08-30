@@ -32,7 +32,7 @@ export async function handleBaseCommand(ctx) {
   if (isHttps) {
     textLines.push(`Tap the button below to launch the 3D Mini App directly in Telegram:`);
     buttons.push([
-      Markup.button.url('🏗️ Open 3D Base', webAppUrl)
+      Markup.button.webApp('🏗️ Open 3D Base', webAppUrl)
     ]);
   } else {
     textLines.push(
