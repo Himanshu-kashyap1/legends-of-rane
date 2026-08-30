@@ -1,6 +1,6 @@
 import { Markup } from 'telegraf';
 import { encodeCallback } from '../buttons/callbackData.js';
-import { formatNumber } from './uiHelpers.js';
+import { formatNumber, escapeMarkdown } from './uiHelpers.js';
 
 /**
  * Builds the clean, premium RPG-style Main Menu view.
@@ -12,14 +12,16 @@ import { formatNumber } from './uiHelpers.js';
  */
 export function renderMainMenu(user) {
   const ownerId = String(user?.telegramId || '0');
-  const name = user?.username ? `@${user.username}` : user?.firstName || 'Adventurer';
+  const rawName = user?.username ? `@${user.username}` : user?.firstName || 'Adventurer';
+  const name = escapeMarkdown(rawName);
+  const title = escapeMarkdown(user?.title || 'Novice Adventurer');
 
   const text = [
     `🏴‍☠️ *LEGENDS OF RANE* 🏴‍☠️`,
     `_Welcome back, hero! Realm aapka intezaar kar raha hai._`,
     '',
     `⚔️ *Hero:* ${name}`,
-    `🎖️ *Title:* _${user?.title || 'Novice Adventurer'}_`,
+    `🎖️ *Title:* _${title}_`,
     `⭐ *Level:* ${user?.level || 1}  •  🪙 *Coins:* ${formatNumber(user?.coins || 0)}`,
     `⚡ *Energy:* ${user?.energy?.current ?? 100} / ${user?.energy?.max ?? 100}`,
     '',

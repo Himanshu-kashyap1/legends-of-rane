@@ -28,7 +28,18 @@ export function formatNumber(num) {
   return Number(num || 0).toLocaleString('en-US');
 }
 
+/**
+ * Escapes characters that have special meaning in Telegram Markdown (legacy mode).
+ * @param {string} text
+ * @returns {string}
+ */
+export function escapeMarkdown(text = '') {
+  if (!text || typeof text !== 'string') return '';
+  return text.replace(/([_*`\[\]()])/g, '\\$1');
+}
+
 export default {
   formatProgressBar,
-  formatNumber
+  formatNumber,
+  escapeMarkdown
 };

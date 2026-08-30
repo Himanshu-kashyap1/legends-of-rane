@@ -65,14 +65,27 @@ export async function sendOrEditCardMessage(ctx, { text, keyboard, pngBuffer }) 
         { caption: text, parse_mode: 'Markdown', ...keyboard }
       );
     } catch (err) {
-      logger.warn('Failed to deliver photo card, falling back to text:', err?.message);
+      logger.warn('Failed to deliver photo card in Markdown mode, trying plain photo caption:', err?.message);
+      try {
+        return await ctx.replyWithPhoto(
+          { source: pngBuffer },
+          { caption: text.replace(/[*_`\\]/g, ''), ...keyboard }
+        );
+      } catch (photoErr) {
+        logger.warn('Photo delivery failed completely, falling back to text:', photoErr?.message);
+      }
     }
   }
 
-  // Text fallback
-  return ctx.reply(text, { parse_mode: 'Markdown', ...keyboard }).catch((err) => {
-    logger.debug('Text fallback reply failed:', err?.message);
-  });
+  // Text fallback with Markdown
+  try {
+    return await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+  } catch (textErr) {
+    logger.warn('Text Markdown reply failed, falling back to plain text:', textErr?.message);
+    return await ctx.reply(text.replace(/[*_`\\]/g, ''), keyboard).catch((err) => {
+      logger.error('Critical: Failed to deliver plain text message to user:', err?.message);
+    });
+  }
 }
 
 export default {

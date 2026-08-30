@@ -2,6 +2,7 @@ import { Markup } from 'telegraf';
 import { encodeCallback } from '../buttons/callbackData.js';
 import { getPlayerProfileData } from '../../services/profileService.js';
 import { syncTitles } from '../../engine/progression/progressionEngine.js';
+import { escapeMarkdown } from './uiHelpers.js';
 
 /**
  * Builds the simplified, command-first Player Profile view.
@@ -12,6 +13,8 @@ export function renderProfile(user) {
   syncTitles(user);
   const profile = getPlayerProfileData(user);
   const ownerId = String(user.telegramId);
+  const safeName = escapeMarkdown(profile.name);
+  const safeTitle = escapeMarkdown(profile.title);
 
   const skillsList = Object.values(profile.skills).map(skill => {
     return `${skill.emoji} *${skill.name}* (Lv ${skill.level}): \`${skill.progressBar}\` _(${skill.xp}/${skill.requiredXp} XP)_`;
@@ -20,8 +23,8 @@ export function renderProfile(user) {
   const text = [
     `👤 *CHARACTER PROFILE* 👤`,
     `━━━━━━━━━━━━━━━━━━━━━━`,
-    `⚔️ *Hero:* ${profile.name}`,
-    `🎖️ *Title:* 👑 _${profile.title}_`,
+    `⚔️ *Hero:* ${safeName}`,
+    `🎖️ *Title:* 👑 _${safeTitle}_`,
     `⭐ *Player Level:* Level ${profile.level}`,
     `📈 *Progress:* \`${profile.progressBar}\` _(${profile.xp}/${profile.requiredXp} XP)_`,
     '',
