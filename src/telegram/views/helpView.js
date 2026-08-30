@@ -245,6 +245,38 @@ export function renderCommandDetailView(user, commandArg) {
   return renderHelpView(user);
 }
 
+/**
+ * Finds a category configuration matching a user's copy-pasted partition text.
+ *
+ * @param {string} text
+ * @returns {string|null}
+ */
+export function matchCategoryFromText(text) {
+  if (!text || typeof text !== 'string') return null;
+  const clean = text
+    .toLowerCase()
+    .replace(/[>•'"❞“”#*_`]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!clean || clean.length < 4) return null;
+
+  if (clean.includes('gathering') || clean.includes('harvest')) {
+    return 'gatheringharvest';
+  }
+  if (clean.includes('blacksmith') || clean.includes('equipment')) {
+    return 'blacksmithequipment';
+  }
+  if (clean.includes('economy') || clean.includes('trading')) {
+    return 'economytrading';
+  }
+  if (clean.includes('3d voxel') || clean.includes('voxel base') || clean.includes('multiplayer')) {
+    return '3dvoxelbasemultiplayer';
+  }
+
+  return null;
+}
+
 export default {
   renderHelpView,
   renderGatheringCategoryView,
@@ -252,5 +284,6 @@ export default {
   renderEconomyCategoryView,
   renderBaseCategoryView,
   renderCategoryDetailView,
-  renderCommandDetailView
+  renderCommandDetailView,
+  matchCategoryFromText
 };
