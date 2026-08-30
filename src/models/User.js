@@ -198,6 +198,10 @@ const UserSchema = new mongoose.Schema({
     pickaxeInstanceId: { type: String, default: null },
     rodInstanceId: { type: String, default: null }
   },
+  equippedWeapon: {
+    type: String,
+    default: 'wpn_wood_blade'
+  },
   pets: {
     type: [OwnedPetSchema],
     default: []
@@ -223,6 +227,8 @@ const UserSchema = new mongoose.Schema({
     gatheredCount: { type: Number, default: 0, min: 0 },
     craftedCount: { type: Number, default: 0, min: 0 },
     bossDamageDealt: { type: Number, default: 0, min: 0 },
+    monstersDefeated: { type: Number, default: 0, min: 0 },
+    totalCoinsEarned: { type: Number, default: 0, min: 0 },
     marketTradesCompleted: { type: Number, default: 0, min: 0 },
     giftsSent: { type: Number, default: 0, min: 0 },
     giftsReceived: { type: Number, default: 0, min: 0 },

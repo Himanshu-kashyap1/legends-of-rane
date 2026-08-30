@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Legends of Rane — 3D Voxel Base</title>
+  <title>Legends of Rane — 3D Monster Hunting World</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <!-- Three.js & OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -14,40 +14,84 @@
   <!-- 3D WebGL Canvas Container -->
   <div id="canvas-container"></div>
 
+  <!-- Dynamic Floating Combat Numbers & Drop FX Layer -->
+  <div id="combat-hud-overlay"></div>
+
   <!-- Interactive Overlay UI -->
   <div class="ui-layer">
     <!-- Top Status & Action Bar -->
     <div class="top-bar glass-panel interactive">
-      <div class="base-title">
-        <span>🏰</span>
-        <span id="base-name-display">My Sanctuary</span>
-        <span class="block-counter" id="block-counter">0 / 2000</span>
+      <!-- Player Vital Stats -->
+      <div class="player-hud">
+        <div class="avatar-badge" id="player-level-badge">Lv 1</div>
+        <div class="vitals">
+          <div class="vital-row">
+            <span class="player-name" id="player-name-display">Hunter</span>
+            <span class="player-coins" id="player-coins-display">🪙 0</span>
+          </div>
+          <div class="hp-bar-track">
+            <div class="hp-bar-fill" id="player-hp-bar" style="width: 100%;"></div>
+            <span class="hp-text" id="player-hp-text">100 / 100 HP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Location & Mode Toggle -->
+      <div class="top-center-status">
+        <div class="biome-pill" id="current-biome-pill">🏰 Holy Sanctuary</div>
       </div>
 
       <div class="top-actions">
+        <button class="btn-icon mode-toggle-btn" id="btn-toggle-game-mode" title="Toggle Mode">⚔️ Hunt</button>
+        <button class="btn-icon" id="btn-open-forge" title="Equipment & Forge">🗡️ Gear</button>
         <button class="btn-icon" id="btn-tod" title="Toggle Lighting">☀️ Day</button>
-        <button class="btn-icon" id="btn-recenter" title="Recenter Camera">🎯 Center</button>
-        <button class="btn-icon" id="btn-clear-open" title="Clear Base" style="color: #f87171;">🗑️ Clear</button>
       </div>
     </div>
 
-    <!-- Mode Selector (Place vs Break) -->
-    <div class="mode-bar interactive">
+    <!-- Mode Selector (Building Mode Only) -->
+    <div class="mode-bar interactive" id="building-mode-bar" style="display: none;">
       <button class="btn-mode active" id="btn-mode-place">🔨 Place Block</button>
       <button class="btn-mode" id="btn-mode-break">⛏️ Break Block</button>
     </div>
 
     <!-- Toast Notifications -->
     <div id="toast-container">
-      <div class="toast" id="toast-msg">Base saved to cloud!</div>
+      <div class="toast" id="toast-msg">Welcome to the Monster Hunting World!</div>
     </div>
 
-    <!-- Bottom Hotbar & Full Palette Trigger -->
-    <div class="bottom-section">
+    <!-- Mobile Virtual Joystick (Left) -->
+    <div class="joystick-zone interactive" id="joystick-zone">
+      <div class="joystick-base" id="joystick-base">
+        <div class="joystick-knob" id="joystick-knob"></div>
+      </div>
+    </div>
+
+    <!-- Mobile Action Combat Controls (Right) -->
+    <div class="combat-actions-zone interactive" id="combat-actions-zone">
+      <button class="btn-action btn-target" id="btn-action-target" title="Target Lock">🎯</button>
+      <button class="btn-action btn-sprint" id="btn-action-sprint" title="Sprint">🏃</button>
+      <button class="btn-action btn-attack primary" id="btn-action-attack" title="Attack">⚔️</button>
+    </div>
+
+    <!-- Bottom Hotbar & Full Palette (Building Mode) -->
+    <div class="bottom-section" id="building-bottom-section" style="display: none;">
       <div class="hotbar-container glass-panel interactive" id="hotbar-container">
         <!-- 9 Slots dynamically injected by app.js -->
       </div>
       <button class="btn-palette-toggle interactive" id="btn-palette-open">📦 All Blocks (28+)</button>
+    </div>
+  </div>
+
+  <!-- Telegram Inventory & Weapon Forge Drawer -->
+  <div class="modal-overlay" id="forge-modal">
+    <div class="modal-card glass-panel interactive" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3>🗡️ Equipment & Telegram Forge</h3>
+        <button class="btn-icon" id="btn-forge-close">✕</button>
+      </div>
+      <div class="modal-body" id="forge-body">
+        <!-- Injected dynamically -->
+      </div>
     </div>
   </div>
 

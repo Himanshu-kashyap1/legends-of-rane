@@ -6,6 +6,7 @@ import { checkDatabaseHealth } from '../database/connection.js';
 import { logger } from '../utils/logger.js';
 import { config } from '../config/env.js';
 import { baseRouter } from './routes/baseRoutes.js';
+import { huntingRouter } from './routes/huntingRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,8 +27,9 @@ export function createExpressApp() {
   const publicWebappPath = path.resolve(__dirname, '../../public/webapp');
   app.use('/webapp', express.static(publicWebappPath));
 
-  // Mount Voxel Base APIs
+  // Mount Voxel Base & Hunting APIs
   app.use('/api/base', baseRouter);
+  app.use('/api/hunting', huntingRouter);
 
   // Healthcheck endpoint
   app.get('/health', async (req, res) => {
