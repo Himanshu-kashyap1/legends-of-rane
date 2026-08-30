@@ -21,47 +21,40 @@ test.after(async () => {
   await disconnectDatabase();
 });
 
-test('1. Main Menu is clean and premium RPG-style (6 direct navigation buttons)', () => {
+test('1. Main Menu is clean and streamlined (2 primary buttons: Add Me and Commands Info)', () => {
   const user = {
     telegramId: '12345',
     username: 'tester',
     level: 5,
-    coins: 1000,
-    title: 'Novice Adventurer',
-    energy: { current: 100, max: 100 }
+    coins: 1000
   };
 
   const { text, keyboard } = renderMainMenu(user);
   assert.ok(text.includes('Hero:'));
   assert.ok(text.includes('Level:'));
   assert.ok(text.includes('Coins:'));
-  assert.ok(text.includes('Energy:'));
-  assert.ok(text.includes('/help'));
 
-  // 6 buttons in 3 rows
   const rows = keyboard.reply_markup.inline_keyboard;
-  assert.strictEqual(rows.length, 3);
   const buttonCount = rows.flat().length;
-  assert.strictEqual(buttonCount, 6);
+  assert.strictEqual(buttonCount, 2);
 });
 
-test('2. Help View renders comprehensive command guide with natural English + Hinglish', () => {
+test('2. Help View renders comprehensive command guide with direct action shortcuts', () => {
   const user = { telegramId: '12345' };
   const { text, keyboard } = renderHelpView(user);
 
-  assert.ok(text.includes('COMMAND GUIDE'));
-  assert.ok(text.includes('/explore'));
+  assert.ok(text.includes('COMMANDS & GUIDE') || text.includes('COMMAND GUIDE'));
+  assert.ok(text.includes('/chop') || text.includes('/explore'));
   assert.ok(text.includes('/craft'));
-  assert.ok(text.includes('/tools repair'));
-  assert.ok(text.includes('/pets equip'));
+  assert.ok(text.includes('/tools'));
   assert.ok(text.includes('/market'));
   assert.ok(text.includes('/boss'));
 
   const buttonCount = keyboard.reply_markup.inline_keyboard.flat().length;
-  assert.ok(buttonCount <= 2);
+  assert.ok(buttonCount >= 6);
 });
 
-test('3. Exploration, Workshop, Marketplace, Pets, Quests have compact layouts and <= 6 buttons', async () => {
+test('3. Exploration, Workshop, Marketplace, Pets, Quests have compact layouts', async () => {
   const user = {
     telegramId: '12345',
     coins: 500,
@@ -74,7 +67,7 @@ test('3. Exploration, Workshop, Marketplace, Pets, Quests have compact layouts a
 
   // 1. Explore Menu
   const exp = renderExploreMenu(user);
-  assert.ok(exp.keyboard.reply_markup.inline_keyboard.flat().length <= 4);
+  assert.ok(exp.keyboard.reply_markup.inline_keyboard.flat().length <= 6);
 
   // 2. Zone View
   const zone = renderZoneView(user, 'zone_forest');

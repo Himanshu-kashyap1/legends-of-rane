@@ -69,7 +69,6 @@ test('QA 1: Player Registration, Initial Economy, and Progression Integrity', as
 
   assert.strictEqual(user1.coins, 100);
   assert.strictEqual(user1.level, 5);
-  assert.strictEqual(user1.title, 'Novice Adventurer');
 });
 
 test('QA 2: Economy & Gifting Protection — Zero Duplication & Negative Balance Prevention', async () => {

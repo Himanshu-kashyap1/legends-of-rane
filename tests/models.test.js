@@ -140,7 +140,7 @@ test('Models: Base validates grid bounds and block coordinates', () => {
   const invalidBase = new Base({
     telegramId: '987654321',
     blocks: [
-      { x: 50, y: -5, z: 100, blockType: 'grass' } // Exceeds grid and negative y
+      { x: 50, y: -10, z: 100, blockType: 'grass' } // Exceeds grid and out-of-bounds negative y
     ]
   });
   const err = invalidBase.validateSync();
