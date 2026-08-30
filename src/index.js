@@ -3,6 +3,7 @@ import { logger } from './utils/logger.js';
 import { connectDatabase, disconnectDatabase } from './database/connection.js';
 import { createExpressApp } from './server/app.js';
 import { createBot } from './telegram/bot.js';
+import { startKeepAlive, stopKeepAlive } from './utils/keepAlive.js';
 
 let httpServer = null;
 let botInstance = null;
@@ -68,6 +69,9 @@ async function bootstrap() {
   } else {
     logger.warn('No BOT_TOKEN configured. Telegram Bot polling skipped.');
   }
+
+  // 4. Start Keep-Alive Auto-Pinger (keeps Render awake 24/7)
+  startKeepAlive();
 }
 
 /**
@@ -78,6 +82,9 @@ async function gracefulShutdown(signal) {
   if (isShuttingDown) return;
   isShuttingDown = true;
   logger.info(`Received ${signal}. Initiating graceful shutdown...`);
+
+  // Stop Keep-Alive
+  stopKeepAlive();
 
   try {
     // 1. Stop Telegram bot polling
