@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   generateMainMenuSvg,
   generateProfileSvg,
@@ -10,6 +13,26 @@ import {
 } from '../renderer/cardTemplates.js';
 import { renderSvgToPngBuffer } from '../renderer/cardRenderer.js';
 import { logger } from '../utils/logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/**
+ * Helper to load pre-generated high-res artwork or fallback to procedural SVG.
+ */
+function getArtworkOrGenerate(fileName, svgGenerator, user) {
+  try {
+    const filePath = path.resolve(__dirname, '../../public/images', fileName);
+    if (fs.existsSync(filePath)) {
+      return fs.readFileSync(filePath);
+    }
+  } catch (err) {
+    logger.debug(`Artwork load skipped for ${fileName}:`, err?.message);
+  }
+
+  const svg = svgGenerator(user);
+  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+}
 
 /**
  * Renders Main Menu Banner PNG Card buffer (800x400).
@@ -53,43 +76,39 @@ export function renderLeaderboardCard(leaderboardData) {
 }
 
 /**
- * 1. Renders Gathering & Harvest PNG Card buffer (800x400).
+ * 1. Renders Gathering & Harvest RPG Card buffer (800x400 / 16:9).
  * @param {Object} user
  * @returns {Buffer}
  */
 export function renderGatheringCard(user) {
-  const svg = generateGatheringCategorySvg(user);
-  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+  return getArtworkOrGenerate('card_gathering.jpg', generateGatheringCategorySvg, user);
 }
 
 /**
- * 2. Renders Blacksmith & Equipment PNG Card buffer (800x400).
+ * 2. Renders Blacksmith & Equipment RPG Card buffer (800x400 / 16:9).
  * @param {Object} user
  * @returns {Buffer}
  */
 export function renderBlacksmithCard(user) {
-  const svg = generateBlacksmithCategorySvg(user);
-  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+  return getArtworkOrGenerate('card_blacksmith.jpg', generateBlacksmithCategorySvg, user);
 }
 
 /**
- * 3. Renders Economy & Trading PNG Card buffer (800x400).
+ * 3. Renders Economy & Trading RPG Card buffer (800x400 / 16:9).
  * @param {Object} user
  * @returns {Buffer}
  */
 export function renderEconomyCard(user) {
-  const svg = generateEconomyCategorySvg(user);
-  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+  return getArtworkOrGenerate('card_economy.jpg', generateEconomyCategorySvg, user);
 }
 
 /**
- * 4. Renders 3D Voxel Base & Multiplayer PNG Card buffer (800x400).
+ * 4. Renders 3D Voxel Base & Multiplayer RPG Card buffer (800x400 / 16:9).
  * @param {Object} user
  * @returns {Buffer}
  */
 export function renderBaseCard(user) {
-  const svg = generateBaseCategorySvg(user);
-  return renderSvgToPngBuffer(svg, { fitTo: { mode: 'width', value: 800 } });
+  return getArtworkOrGenerate('card_base.jpg', generateBaseCategorySvg, user);
 }
 
 /**
@@ -122,7 +141,7 @@ export function renderCategoryCard(categoryKey, user) {
  * @param {Object} params
  * @param {string} params.text - Caption or message text
  * @param {any} params.keyboard - Inline keyboard
- * @param {Buffer} [params.pngBuffer] - PNG card buffer
+ * @param {Buffer} [params.pngBuffer] - PNG/JPG card buffer
  */
 export async function sendOrEditCardMessage(ctx, { text, keyboard, pngBuffer }) {
   if (pngBuffer && Buffer.isBuffer(pngBuffer)) {
