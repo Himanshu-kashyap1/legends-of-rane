@@ -12,9 +12,8 @@ import { formatNumber, escapeMarkdown } from './uiHelpers.js';
  */
 export function renderMainMenu(user) {
   const ownerId = String(user?.telegramId || '0');
-  const rawName = user?.username ? `@${user.username}` : user?.firstName || 'Adventurer';
-  const name = escapeMarkdown(rawName);
-  const title = escapeMarkdown(user?.title || 'Novice Adventurer');
+  const name = user?.firstName || (user?.username ? `@${user.username}` : 'Adventurer');
+  const title = user?.title || 'Novice Adventurer';
 
   const text = [
     `🏴‍☠️ *LEGENDS OF RANE* 🏴‍☠️`,
