@@ -136,29 +136,80 @@ export function renderCategoryDetailView(user, categoryKey) {
 }
 
 /**
- * Finds a category configuration matching a user's text message.
+ * Renders detail view for a specific command lookup.
+ * E.g., `/guide chop` or `/help market`
  *
- * @param {string} text
- * @returns {string|null}
+ * @param {Object} user
+ * @param {string} commandArg
+ * @returns {{ text: string, keyboard: any }}
  */
-export function matchCategoryFromText(text) {
-  if (!text || typeof text !== 'string') return null;
-  const clean = text.trim().toLowerCase().replace(/['"❞“”]/g, '');
+export function renderCommandDetailView(user, commandArg) {
+  const ownerId = String(user?.telegramId || '0');
+  const cleanArg = (commandArg || '').trim().toLowerCase().replace(/^\//, '');
 
-  for (const [key, conf] of Object.entries(CATEGORIES_CONFIG)) {
-    for (const trig of conf.triggers) {
-      const cleanTrig = trig.toLowerCase().replace(/['"❞“”]/g, '');
-      if (clean === cleanTrig || clean.includes(cleanTrig) || cleanTrig.includes(clean)) {
-        return key;
+  // Check if it's a category first
+  const matchedCat = matchCategoryFromText(cleanArg) || (CATEGORIES_CONFIG[cleanArg] ? cleanArg : null);
+  if (matchedCat) {
+    return renderCategoryDetailView(user, matchedCat);
+  }
+
+  // Look for specific command in categories
+  let foundCommand = null;
+  let parentCat = null;
+
+  for (const cat of Object.values(CATEGORIES_CONFIG)) {
+    for (const cmd of cat.commands) {
+      const bareCmd = cmd.cmd.split(' ')[0].replace(/^\//, '').toLowerCase();
+      if (bareCmd === cleanArg) {
+        foundCommand = cmd;
+        parentCat = cat;
+        break;
       }
     }
+    if (foundCommand) break;
   }
-  return null;
+
+  if (foundCommand) {
+    const text = [
+      `📜 *COMMAND INFO: \`${foundCommand.cmd}\`* 📜`,
+      `━━━━━━━━━━━━━━━━━━━━━━`,
+      `*Category:* ${parentCat.displayName}`,
+      `*Description:* ${foundCommand.desc}`,
+      '',
+      `_Type \`${foundCommand.cmd}\` to execute this action._`
+    ].join('\n');
+
+    const keyboard = Markup.inlineKeyboard([
+      [
+        Markup.button.callback('📜 All Commands', encodeCallback({ action: 'nav_help', ownerId })),
+        Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
+      ]
+    ]);
+
+    return { text, keyboard };
+  }
+
+  // Not found fallback
+  const text = [
+    `❓ *COMMAND NOT FOUND: \`/${cleanArg}\`*`,
+    `━━━━━━━━━━━━━━━━━━━━━━`,
+    `Please check the available categories below or type \`/guide\` to see all partitions.`
+  ].join('\n');
+
+  const keyboard = Markup.inlineKeyboard([
+    [
+      Markup.button.callback('📜 Open Guide', encodeCallback({ action: 'nav_help', ownerId })),
+      Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
+    ]
+  ]);
+
+  return { text, keyboard };
 }
 
 export default {
   renderHelpView,
   renderCategoryDetailView,
+  renderCommandDetailView,
   matchCategoryFromText,
   CATEGORIES_CONFIG
 };
