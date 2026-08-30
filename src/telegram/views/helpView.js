@@ -206,6 +206,27 @@ export function renderCommandDetailView(user, commandArg) {
   return { text, keyboard };
 }
 
+/**
+ * Finds a category configuration matching a user's text message.
+ *
+ * @param {string} text
+ * @returns {string|null}
+ */
+export function matchCategoryFromText(text) {
+  if (!text || typeof text !== 'string') return null;
+  const clean = text.trim().toLowerCase().replace(/['"❞“”]/g, '');
+
+  for (const [key, conf] of Object.entries(CATEGORIES_CONFIG)) {
+    for (const trig of conf.triggers) {
+      const cleanTrig = trig.toLowerCase().replace(/['"❞“”]/g, '');
+      if (clean === cleanTrig || clean.includes(cleanTrig) || cleanTrig.includes(clean)) {
+        return key;
+      }
+    }
+  }
+  return null;
+}
+
 export default {
   renderHelpView,
   renderCategoryDetailView,
