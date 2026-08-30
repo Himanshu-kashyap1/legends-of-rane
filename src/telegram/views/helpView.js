@@ -6,7 +6,13 @@ export const CATEGORIES_CONFIG = {
     key: 'gathering',
     title: '🌲 GATHERING & HARVEST ❞',
     displayName: '🌲 GATHERING & HARVEST',
-    triggers: ['gathering', 'harvest', 'gathering & harvest', '🌲 gathering & harvest', '🌲 gathering & harvest ❞', 'woodcutting', 'mining', 'fishing'],
+    triggers: [
+      'gathering & harvest',
+      'gathering and harvest',
+      'gathering & harvest ❞',
+      'gathering',
+      'harvest'
+    ],
     commands: [
       { cmd: '/chop', desc: 'Fast woodcutting harvest in the Whispering Woods' },
       { cmd: '/mine', desc: 'Mining granite, coal, iron, gold & diamonds in the Quarry' },
@@ -18,7 +24,14 @@ export const CATEGORIES_CONFIG = {
     key: 'blacksmith',
     title: '⚒️ BLACKSMITH & EQUIPMENT ❞',
     displayName: '⚒️ BLACKSMITH & EQUIPMENT',
-    triggers: ['blacksmith', 'equipment', 'blacksmith & equipment', '⚒️ blacksmith & equipment', '⚒️ blacksmith & equipment ❞', 'workshop', 'craft', 'tools'],
+    triggers: [
+      'blacksmith & equipment',
+      'blacksmith and equipment',
+      'blacksmith & equipment ❞',
+      'blacksmith',
+      'equipment',
+      'workshop'
+    ],
     commands: [
       { cmd: '/craft', desc: 'Smelt ingots, cut planks & forge gear' },
       { cmd: '/tools', desc: 'Inspect tool durability, repair broken tools & upgrade tiers' },
@@ -30,7 +43,13 @@ export const CATEGORIES_CONFIG = {
     key: 'economy',
     title: '🎒 ECONOMY & TRADING ❞',
     displayName: '🎒 ECONOMY & TRADING',
-    triggers: ['economy', 'trading', 'economy & trading', '🎒 economy & trading', '🎒 economy & trading ❞', 'bag', 'inventory', 'market', 'sell', 'gift'],
+    triggers: [
+      'economy & trading',
+      'economy and trading',
+      'economy & trading ❞',
+      'economy',
+      'trading'
+    ],
     commands: [
       { cmd: '/bag', desc: 'View stored resources, tools & treasury balance' },
       { cmd: '/inventory', desc: 'Full backpack browser with page navigation' },
@@ -43,7 +62,15 @@ export const CATEGORIES_CONFIG = {
     key: 'base',
     title: '🏰 3D VOXEL BASE & MULTIPLAYER ❞',
     displayName: '🏰 3D VOXEL BASE & MULTIPLAYER',
-    triggers: ['3d voxel', 'voxel', 'base', 'multiplayer', '3d voxel base & multiplayer', '🏰 3d voxel base & multiplayer', '🏰 3d voxel base & multiplayer ❞', 'boss', 'pets', 'profile', 'quests', 'offline'],
+    triggers: [
+      '3d voxel base & multiplayer',
+      '3d voxel base and multiplayer',
+      '3d voxel base & multiplayer ❞',
+      '3d voxel base',
+      'voxel base',
+      '3d voxel',
+      'multiplayer'
+    ],
     commands: [
       { cmd: '/base', desc: 'Launch Deep 3D Voxel Minecraft-style Kingdom Mini App' },
       { cmd: '/boss', desc: 'Summon and strike the Ancient Colossus in group chats' },
@@ -207,19 +234,26 @@ export function renderCommandDetailView(user, commandArg) {
 }
 
 /**
- * Finds a category configuration matching a user's text message.
+ * Finds a category configuration matching a user's copy-pasted partition text.
+ * E.g., `> 🌲 GATHERING & HARVEST ❞` or `gathering & harvest`
  *
  * @param {string} text
  * @returns {string|null}
  */
 export function matchCategoryFromText(text) {
   if (!text || typeof text !== 'string') return null;
-  const clean = text.trim().toLowerCase().replace(/['"❞“”]/g, '');
+  const clean = text
+    .toLowerCase()
+    .replace(/[>•'"❞“”#*_`]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!clean || clean.length < 4) return null;
 
   for (const [key, conf] of Object.entries(CATEGORIES_CONFIG)) {
     for (const trig of conf.triggers) {
-      const cleanTrig = trig.toLowerCase().replace(/['"❞“”]/g, '');
-      if (clean === cleanTrig || clean.includes(cleanTrig) || cleanTrig.includes(clean)) {
+      const cleanTrig = trig.toLowerCase().replace(/['"❞“”]/g, '').trim();
+      if (clean === cleanTrig || clean.includes(cleanTrig)) {
         return key;
       }
     }
