@@ -36,16 +36,27 @@ export function getDynamicBannerBuffer(now = new Date()) {
  * /start command handler with dynamic Day/Night anime scenery
  */
 export async function handleStartCommand(ctx) {
-  const user = ctx.state.user;
-  if (!user) {
-    return ctx.reply('⚠️ Failed to load player profile. Please try again.');
+  try {
+    const user = ctx.state.user;
+    if (!user) {
+      return ctx.reply('🏰 Welcome to Legends of Rane! Registering your adventurer profile...');
+    }
+
+    const botUsername = ctx.botInfo?.username || ctx.me?.username || 'IamRaneBot';
+    const { text, keyboard } = renderMainMenu(user, botUsername);
+    const bannerBuffer = getDynamicBannerBuffer();
+
+    await sendOrEditCardMessage(ctx, { text, keyboard, pngBuffer: bannerBuffer });
+  } catch (err) {
+    logger.error('Error executing /start command:', err);
+    try {
+      const user = ctx.state?.user;
+      const { text, keyboard } = renderMainMenu(user || { telegramId: ctx.from?.id, level: 1, coins: 100 });
+      await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    } catch (fallbackErr) {
+      logger.error('Fallback /start delivery failed:', fallbackErr);
+    }
   }
-
-  const botUsername = ctx.botInfo?.username || ctx.me?.username || 'IamRaneBot';
-  const { text, keyboard } = renderMainMenu(user, botUsername);
-  const bannerBuffer = getDynamicBannerBuffer();
-
-  await sendOrEditCardMessage(ctx, { text, keyboard, pngBuffer: bannerBuffer });
 }
 
 export default handleStartCommand;
