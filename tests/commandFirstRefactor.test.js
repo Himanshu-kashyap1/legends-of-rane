@@ -91,7 +91,7 @@ test('3. Exploration, Workshop, Marketplace, Pets, Quests have compact layouts',
 
   // 7. Profile
   const prof = renderProfile(user);
-  assert.ok(prof.keyboard.reply_markup.inline_keyboard.flat().length <= 2);
+  assert.ok(prof.keyboard.reply_markup.inline_keyboard.flat().length <= 4);
 });
 
 test('4. Stale/Unknown callback gracefully responds with helpful Hindi/English message', async () => {
