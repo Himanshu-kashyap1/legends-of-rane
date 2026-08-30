@@ -8,6 +8,7 @@ import { actionLockMiddleware } from './middlewares/actionLock.js';
 import { ownershipGuardMiddleware } from './middlewares/ownershipGuard.js';
 import { callbackRouter } from './buttons/callbackRouter.js';
 import { registerCommands } from './commands/index.js';
+import { renderCategoryDetailView, matchCategoryFromText } from './views/helpView.js';
 
 let botInstance = null;
 
@@ -49,6 +50,23 @@ export function createBot() {
 
   // 6. Command Registration (/start, /explore, etc.)
   registerCommands(bot);
+
+  // 7. Natural Text Listener for Copy-Pasted Category Phrases
+  bot.on('text', async (ctx, next) => {
+    const text = ctx.message?.text;
+    if (!text || text.startsWith('/')) {
+      return next();
+    }
+
+    const matchedCat = matchCategoryFromText(text);
+    if (matchedCat) {
+      const user = ctx.state.user;
+      const { text: replyText, keyboard } = renderCategoryDetailView(user, matchedCat);
+      return ctx.reply(replyText, { parse_mode: 'Markdown', ...keyboard });
+    }
+
+    return next();
+  });
 
   botInstance = bot;
   return bot;

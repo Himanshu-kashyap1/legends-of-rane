@@ -1,155 +1,62 @@
 import { Markup } from 'telegraf';
 import { encodeCallback } from '../buttons/callbackData.js';
 
-export const COMMAND_CATALOG = {
-  chop: {
-    name: '/chop',
-    category: '🌲 Gathering & Harvest',
-    desc: 'Instantly cut oak and rare timber in the Whispering Woods.',
-    usage: '`/chop`',
-    example: '`/chop`',
-    alt: '`/explore`'
+export const CATEGORIES_CONFIG = {
+  gathering: {
+    key: 'gathering',
+    title: '🌲 GATHERING & HARVEST ❞',
+    displayName: '🌲 GATHERING & HARVEST',
+    triggers: ['gathering', 'harvest', 'gathering & harvest', '🌲 gathering & harvest', '🌲 gathering & harvest ❞', 'woodcutting', 'mining', 'fishing'],
+    commands: [
+      { cmd: '/chop', desc: 'Fast woodcutting harvest in the Whispering Woods' },
+      { cmd: '/mine', desc: 'Mining granite, coal, iron, gold & diamonds in the Quarry' },
+      { cmd: '/fish', desc: 'Fishing for aquatic treasures along River Rane' },
+      { cmd: '/explore', desc: 'Browse all gathering territories, zones & nodes' }
+    ]
   },
-  mine: {
-    name: '/mine',
-    category: '🌲 Gathering & Harvest',
-    desc: 'Mine granite, coal, iron, gold, and diamonds from the Quarry.',
-    usage: '`/mine`',
-    example: '`/mine`',
-    alt: '`/explore`'
+  blacksmith: {
+    key: 'blacksmith',
+    title: '⚒️ BLACKSMITH & EQUIPMENT ❞',
+    displayName: '⚒️ BLACKSMITH & EQUIPMENT',
+    triggers: ['blacksmith', 'equipment', 'blacksmith & equipment', '⚒️ blacksmith & equipment', '⚒️ blacksmith & equipment ❞', 'workshop', 'craft', 'tools'],
+    commands: [
+      { cmd: '/craft', desc: 'Smelt ingots, cut planks & forge gear' },
+      { cmd: '/tools', desc: 'Inspect tool durability, repair broken tools & upgrade tiers' },
+      { cmd: '/tools repair', desc: 'Quick repair damaged equipment' },
+      { cmd: '/tools upgrade', desc: 'Upgrade tools to higher tiers (Stone, Iron, Gold, Diamond)' }
+    ]
   },
-  fish: {
-    name: '/fish',
-    category: '🌲 Gathering & Harvest',
-    desc: 'Cast your line in River Rane for aquatic items and pearls.',
-    usage: '`/fish`',
-    example: '`/fish`',
-    alt: '`/explore`'
-  },
-  explore: {
-    name: '/explore',
-    category: '🌲 Gathering & Harvest',
-    desc: 'Browse all gathering territories, resource nodes, and zones.',
-    usage: '`/explore` or `/gather`',
-    example: '`/explore`',
-    alt: '`/chop`, `/mine`, `/fish`'
-  },
-  craft: {
-    name: '/craft',
-    category: '⚒️ Blacksmith & Workshop',
-    desc: 'Smelt metal ingots, saw timber planks, and forge equipment.',
-    usage: '`/craft` or `/workshop`',
-    example: '`/craft`',
-    alt: '`/tools`'
-  },
-  tools: {
-    name: '/tools',
-    category: '⚒️ Blacksmith & Workshop',
-    desc: 'Inspect tool durability, repair broken tools, and upgrade tiers.',
-    usage: '`/tools` (or `/tools repair`, `/tools upgrade`)',
-    example: '`/tools`',
-    alt: '`/craft`'
-  },
-  bag: {
-    name: '/bag',
-    category: '🎒 Economy & Trading',
-    desc: 'Open backpack to inspect materials, ores, tools, and coins.',
-    usage: '`/bag` or `/inventory`',
-    example: '`/bag`',
-    alt: '`/inventory`'
-  },
-  inventory: {
-    name: '/inventory',
-    category: '🎒 Economy & Trading',
-    desc: 'Open backpack to inspect materials, ores, tools, and coins.',
-    usage: '`/inventory` or `/bag`',
-    example: '`/inventory`',
-    alt: '`/bag`'
-  },
-  market: {
-    name: '/market',
-    category: '🎒 Economy & Trading',
-    desc: 'Browse active player marketplace orders to buy materials.',
-    usage: '`/market`',
-    example: '`/market`',
-    alt: '`/sell`'
-  },
-  sell: {
-    name: '/sell',
-    category: '🎒 Economy & Trading',
-    desc: 'List your materials for sale on the global orderbook.',
-    usage: '`/sell <item_id> <quantity> <price>`',
-    example: '`/sell wood_oak 10 50`',
-    alt: '`/market`'
-  },
-  gift: {
-    name: '/gift',
-    category: '🎒 Economy & Trading',
-    desc: 'Send items directly to friends in Telegram groups (Level 3+).',
-    usage: '`/gift @username <item_id> <quantity>`',
-    example: '`/gift @Arthur wood_oak 5`',
-    alt: '`/bag`'
+  economy: {
+    key: 'economy',
+    title: '🎒 ECONOMY & TRADING ❞',
+    displayName: '🎒 ECONOMY & TRADING',
+    triggers: ['economy', 'trading', 'economy & trading', '🎒 economy & trading', '🎒 economy & trading ❞', 'bag', 'inventory', 'market', 'sell', 'gift'],
+    commands: [
+      { cmd: '/bag', desc: 'View stored resources, tools & treasury balance' },
+      { cmd: '/inventory', desc: 'Full backpack browser with page navigation' },
+      { cmd: '/market', desc: 'Global player trade hub orderbook' },
+      { cmd: '/sell <item> <qty> <price>', desc: 'List your items on the market (e.g. `/sell wood_oak 10 50`)' },
+      { cmd: '/gift @user <item> <qty>', desc: 'Send gifts directly to friends in group chats (Level 3+)' }
+    ]
   },
   base: {
-    name: '/base',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Launch the deep 3D Minecraft-style Holy Sanctuary Mini App.',
-    usage: '`/base` or `/build`',
-    example: '`/base`',
-    alt: '`/build`'
-  },
-  build: {
-    name: '/build',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Launch the deep 3D Minecraft-style Holy Sanctuary Mini App.',
-    usage: '`/build` or `/base`',
-    example: '`/build`',
-    alt: '`/base`'
-  },
-  boss: {
-    name: '/boss',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Summon and strike the Ancient Granite Colossus in group chats.',
-    usage: '`/boss` or `/groupnode`',
-    example: '`/boss`',
-    alt: '`/groupnode`'
-  },
-  pets: {
-    name: '/pets',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Adopt, feed, and equip companion beasts for yield bonuses.',
-    usage: '`/pets` (or `/pets feed <name>`, `/pets equip <name>`)',
-    example: '`/pets`',
-    alt: '`/profile`'
-  },
-  profile: {
-    name: '/profile',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Check your hero level, coin treasury, and 5 skill masteries.',
-    usage: '`/profile`',
-    example: '`/profile`',
-    alt: '`/bag`'
-  },
-  quests: {
-    name: '/quests',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Track daily bounties and claim progression rewards.',
-    usage: '`/quests` or `/quest`',
-    example: '`/quests`',
-    alt: '`/profile`'
-  },
-  offline: {
-    name: '/offline',
-    category: '🏰 3D Voxel Base & Multiplayer',
-    desc: 'Collect idle structure earnings (Lumber Mill, Quarry, Forge).',
-    usage: '`/offline`',
-    example: '`/offline`',
-    alt: '`/profile`'
+    key: 'base',
+    title: '🏰 3D VOXEL BASE & MULTIPLAYER ❞',
+    displayName: '🏰 3D VOXEL BASE & MULTIPLAYER',
+    triggers: ['3d voxel', 'voxel', 'base', 'multiplayer', '3d voxel base & multiplayer', '🏰 3d voxel base & multiplayer', '🏰 3d voxel base & multiplayer ❞', 'boss', 'pets', 'profile', 'quests', 'offline'],
+    commands: [
+      { cmd: '/base', desc: 'Launch Deep 3D Voxel Minecraft-style Kingdom Mini App' },
+      { cmd: '/boss', desc: 'Summon and strike the Ancient Colossus in group chats' },
+      { cmd: '/pets', desc: 'Companion pet sanctuary (adopt, feed, equip)' },
+      { cmd: '/profile', desc: 'Hero level, coins treasury & 5 skill masteries' },
+      { cmd: '/quests', desc: 'Daily bounties & progression milestones' },
+      { cmd: '/offline', desc: 'Claim idle structure earnings (Lumber Mill, Quarry, Forge)' }
+    ]
   }
 };
 
 /**
- * Renders the primary aesthetic /guide screen with small-caps headers & quote blocks.
+ * Renders the main /guide view matching the exact aesthetic screenshot provided.
  *
  * @param {Object} user
  * @returns {{ text: string, keyboard: any }}
@@ -160,43 +67,26 @@ export function renderHelpView(user) {
   const text = [
     `📜 *LEGENDS OF RANE — COMMAND GUIDE* 📜`,
     `━━━━━━━━━━━━━━━━━━━━━━`,
-    `❗️ *ᴜꜱᴀɢᴇ :* \`/guide [command_name]\``,
-    `👉 *ᴀᴠᴀɪʟᴀʙʟᴇ ᴄᴏᴍᴍᴀɴᴅꜱ :* \`chop\`, \`mine\`, \`fish\`, \`explore\`, \`craft\`, \`tools\`, \`bag\`, \`market\`, \`sell\`, \`gift\`, \`base\`, \`boss\`, \`pets\`, \`profile\`, \`quests\`, \`offline\``,
+    `COPY THESE WORD'S TO GET INFO OFF THAT PARTITION COMMANDS`,
+    `👇`,
     '',
-    `🌲 *ɢᴀᴛʜᴇʀɪɴɢ & ʜᴀʀᴠᴇꜱᴛ*`,
-    `> • \`/chop\` or \`/explore\` — Woodcutting in Forest`,
-    `> • \`/mine\` — Mining ores in Granite Quarry`,
-    `> • \`/fish\` — Fishing along River Rane`,
+    `> 🌲 GATHERING & HARVEST ❞`,
     '',
-    `⚒️ *ʙʟᴀᴄᴋꜱᴍɪᴛʜ & ᴇQᴜɪᴘᴍᴇɴᴛ*`,
-    `> • \`/craft\` — Smelt ingots, cut planks & forge gear`,
-    `> • \`/tools\` — Inspect, repair & upgrade axes and pickaxes`,
+    `> ⚒️ BLACKSMITH & EQUIPMENT ❞`,
     '',
-    `🎒 *ᴇᴄᴏɴᴏᴍʏ & ᴛʀᴀᴅɪɴɢ*`,
-    `> • \`/bag\` or \`/inventory\` — View stored resources`,
-    `> • \`/market\` — Global player trade hub`,
-    `> • \`/sell <item> <qty> <price>\` — List items for sale`,
-    `> • \`/gift @user <item> <qty>\` — Send gifts to friends`,
+    `> 🎒 ECONOMY & TRADING ❞`,
     '',
-    `🏰 *3ᴅ ᴠᴏxᴇʟ ʙᴀꜱᴇ & ᴍᴜʟᴛɪᴘʟᴀʏᴇʀ*`,
-    `> • \`/base\` or \`/build\` — Deep 3D Voxel Minecraft Kingdom`,
-    `> • \`/boss\` — Group Colossus Raid Battle`,
-    `> • \`/pets\` — Companion pet sanctuary`,
-    `> • \`/profile\` — Hero level & skill masteries`,
-    `> • \`/quests\` — Daily bounties & progression`,
-    `> • \`/offline\` — Claim idle structure earnings`
+    `> 🏰 3D VOXEL BASE & MULTIPLAYER ❞`
   ].join('\n');
 
   const keyboard = Markup.inlineKeyboard([
     [
-      Markup.button.callback('🌲 Explore', encodeCallback({ action: 'nav_explore', ownerId })),
-      Markup.button.callback('⚒️ Workshop', encodeCallback({ action: 'nav_workshop', ownerId })),
-      Markup.button.callback('🎒 Bag', encodeCallback({ action: 'nav_inventory', ownerId, targetId: '1' }))
+      Markup.button.callback('🌲 Gathering', encodeCallback({ action: 'help_cat', ownerId, targetId: 'gathering' })),
+      Markup.button.callback('⚒️ Blacksmith', encodeCallback({ action: 'help_cat', ownerId, targetId: 'blacksmith' }))
     ],
     [
-      Markup.button.callback('🏰 3D Base', encodeCallback({ action: 'nav_base', ownerId })),
-      Markup.button.callback('🐾 Pets', encodeCallback({ action: 'nav_pets', ownerId })),
-      Markup.button.callback('👤 Status', encodeCallback({ action: 'nav_profile', ownerId }))
+      Markup.button.callback('🎒 Economy', encodeCallback({ action: 'help_cat', ownerId, targetId: 'economy' })),
+      Markup.button.callback('🏰 3D Base', encodeCallback({ action: 'help_cat', ownerId, targetId: 'base' }))
     ],
     [
       Markup.button.callback('🔙 Back', encodeCallback({ action: 'nav_main', ownerId })),
@@ -208,50 +98,36 @@ export function renderHelpView(user) {
 }
 
 /**
- * Renders a specific command's targeted guide card.
+ * Renders all commands under a specific partition/category.
  *
  * @param {Object} user
- * @param {string} commandName
+ * @param {string} categoryKey
  * @returns {{ text: string, keyboard: any }}
  */
-export function renderCommandDetailView(user, commandName) {
+export function renderCategoryDetailView(user, categoryKey) {
   const ownerId = String(user?.telegramId || '0');
-  const cleanCmd = (commandName || '').toLowerCase().trim().replace(/^\//, '');
-  const cmd = COMMAND_CATALOG[cleanCmd];
+  const cat = CATEGORIES_CONFIG[categoryKey];
 
-  if (!cmd) {
-    const text = [
-      `⚠️ *Unknown Command:* \`/${cleanCmd}\``,
-      `━━━━━━━━━━━━━━━━━━━━━━`,
-      `❗️ *ᴜꜱᴀɢᴇ :* \`/guide [command_name]\``,
-      `👉 *ᴀᴠᴀɪʟᴀʙʟᴇ ᴄᴏᴍᴍᴀɴᴅꜱ :* \`chop\`, \`mine\`, \`fish\`, \`explore\`, \`craft\`, \`tools\`, \`bag\`, \`market\`, \`sell\`, \`gift\`, \`base\`, \`boss\`, \`pets\`, \`profile\`, \`quests\`, \`offline\``,
-      '',
-      `_Type \`/guide\` to view all categories._`
-    ].join('\n');
-
-    const keyboard = Markup.inlineKeyboard([
-      [
-        Markup.button.callback('📜 All Commands', encodeCallback({ action: 'nav_help', ownerId })),
-        Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
-      ]
-    ]);
-
-    return { text, keyboard };
+  if (!cat) {
+    return renderHelpView(user);
   }
 
-  const text = [
-    `📖 *ᴄᴏᴍᴍᴀɴᴅ ɢᴜɪᴅᴇ :* \`${cmd.name}\``,
+  const lines = [
+    `📜 *${cat.displayName}* 📜`,
     `━━━━━━━━━━━━━━━━━━━━━━`,
-    `> 💡 *Category:* ${cmd.category}`,
-    `> 📝 *Description:* ${cmd.desc}`,
-    `> ❗️ *Usage:* ${cmd.usage}`,
-    `> 🎯 *Example:* ${cmd.example}`,
-    `> 🔄 *Alternative:* ${cmd.alt}`
-  ].join('\n');
+    `_Commands inside this partition:_`,
+    ''
+  ];
+
+  for (const item of cat.commands) {
+    lines.push(`> • \`${item.cmd}\` — ${item.desc} ❞`);
+  }
+
+  const text = lines.join('\n');
 
   const keyboard = Markup.inlineKeyboard([
     [
-      Markup.button.callback('📜 All Commands', encodeCallback({ action: 'nav_help', ownerId })),
+      Markup.button.callback('📜 All Categories', encodeCallback({ action: 'nav_help', ownerId })),
       Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
     ]
   ]);
@@ -259,8 +135,30 @@ export function renderCommandDetailView(user, commandName) {
   return { text, keyboard };
 }
 
+/**
+ * Finds a category configuration matching a user's text message.
+ *
+ * @param {string} text
+ * @returns {string|null}
+ */
+export function matchCategoryFromText(text) {
+  if (!text || typeof text !== 'string') return null;
+  const clean = text.trim().toLowerCase().replace(/['"❞“”]/g, '');
+
+  for (const [key, conf] of Object.entries(CATEGORIES_CONFIG)) {
+    for (const trig of conf.triggers) {
+      const cleanTrig = trig.toLowerCase().replace(/['"❞“”]/g, '');
+      if (clean === cleanTrig || clean.includes(cleanTrig) || cleanTrig.includes(clean)) {
+        return key;
+      }
+    }
+  }
+  return null;
+}
+
 export default {
   renderHelpView,
-  renderCommandDetailView,
-  COMMAND_CATALOG
+  renderCategoryDetailView,
+  matchCategoryFromText,
+  CATEGORIES_CONFIG
 };

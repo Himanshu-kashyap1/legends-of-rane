@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { connectDatabase, disconnectDatabase } from '../src/database/connection.js';
 import { User } from '../src/models/User.js';
 import { renderMainMenu } from '../src/telegram/views/mainMenuView.js';
-import { renderHelpView } from '../src/telegram/views/helpView.js';
+import { renderHelpView, renderCategoryDetailView } from '../src/telegram/views/helpView.js';
 import { renderExploreMenu, renderZoneView, renderNodeDetailView } from '../src/telegram/views/gatheringView.js';
 import { renderCraftingCategories, renderCategoryRecipes, renderRecipeDetails } from '../src/telegram/views/craftingView.js';
 import { renderMarketHub, renderMarketCategories, renderListingDetails } from '../src/telegram/views/marketView.js';
@@ -39,19 +39,25 @@ test('1. Main Menu is clean and streamlined (2 primary buttons: Add Me and Comma
   assert.strictEqual(buttonCount, 2);
 });
 
-test('2. Help View renders comprehensive command guide with direct action shortcuts', () => {
+test('2. Help View renders partition categories and category drill-downs with quote blocks', () => {
   const user = { telegramId: '12345' };
   const { text, keyboard } = renderHelpView(user);
 
-  assert.ok(text.includes('COMMANDS & GUIDE') || text.includes('COMMAND GUIDE'));
-  assert.ok(text.includes('/chop') || text.includes('/explore'));
-  assert.ok(text.includes('/craft'));
-  assert.ok(text.includes('/tools'));
-  assert.ok(text.includes('/market'));
-  assert.ok(text.includes('/boss'));
+  assert.ok(text.includes('COMMAND GUIDE'));
+  assert.ok(text.includes('GATHERING & HARVEST'));
+  assert.ok(text.includes('BLACKSMITH & EQUIPMENT'));
+  assert.ok(text.includes('ECONOMY & TRADING'));
+  assert.ok(text.includes('3D VOXEL BASE & MULTIPLAYER'));
 
   const buttonCount = keyboard.reply_markup.inline_keyboard.flat().length;
   assert.ok(buttonCount >= 6);
+
+  // Category drill-down test
+  const catView = renderCategoryDetailView(user, 'gathering');
+  assert.ok(catView.text.includes('/chop'));
+  assert.ok(catView.text.includes('/mine'));
+  assert.ok(catView.text.includes('/fish'));
+  assert.ok(catView.text.includes('/explore'));
 });
 
 test('3. Exploration, Workshop, Marketplace, Pets, Quests have compact layouts', async () => {

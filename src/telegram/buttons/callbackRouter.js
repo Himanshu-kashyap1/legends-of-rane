@@ -55,7 +55,7 @@ import {
 } from '../views/bossView.js';
 import { renderEquippedTools } from '../views/toolsView.js';
 import { renderGiftingHub } from '../views/giftingView.js';
-import { renderHelpView } from '../views/helpView.js';
+import { renderHelpView, renderCategoryDetailView } from '../views/helpView.js';
 import { executeGatherAction } from '../../engine/gathering/gatheringEngine.js';
 import { executeRepairTool, executeUpgradeTool } from '../../engine/economy/toolService.js';
 import { executeCraftRecipe } from '../../engine/economy/craftingEngine.js';
@@ -146,6 +146,17 @@ registerCallback('nav_main', async (ctx) => {
 registerCallback('nav_help', async (ctx) => {
   const user = ctx.state.user;
   const { text, keyboard } = renderHelpView(user);
+  await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
+    await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+  });
+  await ctx.answerCbQuery().catch(() => {});
+});
+
+// Navigate to Category Partition View
+registerCallback('help_cat', async (ctx, payload) => {
+  const user = ctx.state.user;
+  const categoryKey = payload.targetId || 'gathering';
+  const { text, keyboard } = renderCategoryDetailView(user, categoryKey);
   await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
     await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
   });
