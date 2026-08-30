@@ -26,20 +26,20 @@ function validateConfig() {
 
   const errors = [];
 
-  if (!botToken && nodeEnv === 'production') {
-    errors.push('BOT_TOKEN is required in production');
-  }
-
-  if (!mongoUri && nodeEnv === 'production') {
-    errors.push('MONGO_URI is required in production');
-  }
-
   if (isNaN(port) || port <= 0 || port > 65535) {
     errors.push(`Invalid PORT value: ${process.env.PORT}`);
   }
 
   if (errors.length > 0) {
     throw new Error(`Configuration Validation Failed:\n- ${errors.join('\n- ')}`);
+  }
+
+  if (!botToken) {
+    console.warn('⚠️ [CONFIG WARNING] BOT_TOKEN is not configured. Telegram bot will run in standby mode.');
+  }
+
+  if (!mongoUri) {
+    console.warn('⚠️ [CONFIG WARNING] MONGO_URI is not configured. Database features will be unavailable.');
   }
 
   return Object.freeze({

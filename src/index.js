@@ -19,21 +19,22 @@ async function bootstrap() {
   logger.info(`Database    : ${config.getMaskedMongoUri()}`);
   logger.info(`Bot Token   : ${config.getMaskedBotToken()}`);
 
-  // 1. Connect to Database
-  try {
-    await connectDatabase();
-  } catch (err) {
-    logger.error('Failed to initialize database on startup:', err.message);
-    if (config.IS_PRODUCTION) {
-      process.exit(1);
-    }
-  }
-
-  // 2. Start HTTP Express Server for Mini App & APIs
+  // 1. Start HTTP Express Server for Mini App & Healthchecks immediately
   const app = createExpressApp();
   httpServer = app.listen(config.PORT, () => {
-    logger.info(`🚀 HTTP & Mini App server listening at http://localhost:${config.PORT}`);
+    logger.info(`🚀 HTTP & Mini App server listening on port ${config.PORT}`);
   });
+
+  // 2. Connect to Database in background/resiliently
+  if (config.MONGO_URI) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      logger.error('Database connection notice on startup:', err.message);
+    }
+  } else {
+    logger.warn('No MONGO_URI provided. Running in standalone mode.');
+  }
 
   // 3. Initialize and Start Telegram Bot
   if (config.BOT_TOKEN) {
