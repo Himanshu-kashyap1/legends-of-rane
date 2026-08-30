@@ -55,7 +55,14 @@ import {
 } from '../views/bossView.js';
 import { renderEquippedTools } from '../views/toolsView.js';
 import { renderGiftingHub } from '../views/giftingView.js';
-import { renderHelpView, renderCategoryDetailView } from '../views/helpView.js';
+import {
+  renderHelpView,
+  renderCategoryDetailView,
+  renderGatheringCategoryView,
+  renderBlacksmithCategoryView,
+  renderEconomyCategoryView,
+  renderBaseCategoryView
+} from '../views/helpView.js';
 import { executeGatherAction } from '../../engine/gathering/gatheringEngine.js';
 import { executeRepairTool, executeUpgradeTool } from '../../engine/economy/toolService.js';
 import { executeCraftRecipe } from '../../engine/economy/craftingEngine.js';
@@ -154,7 +161,36 @@ registerCallback('nav_help', async (ctx) => {
   await ctx.answerCbQuery().catch(() => {});
 });
 
-// Navigate to Category Partition View
+// Category Navigation Callbacks
+registerCallback('cat_gathering', async (ctx) => {
+  const user = ctx.state.user;
+  const { text, keyboard } = renderGatheringCategoryView(user);
+  await safeEditOrReply(ctx, text, keyboard);
+  await ctx.answerCbQuery().catch(() => {});
+});
+
+registerCallback('cat_blacksmith', async (ctx) => {
+  const user = ctx.state.user;
+  const { text, keyboard } = renderBlacksmithCategoryView(user);
+  await safeEditOrReply(ctx, text, keyboard);
+  await ctx.answerCbQuery().catch(() => {});
+});
+
+registerCallback('cat_economy', async (ctx) => {
+  const user = ctx.state.user;
+  const { text, keyboard } = renderEconomyCategoryView(user);
+  await safeEditOrReply(ctx, text, keyboard);
+  await ctx.answerCbQuery().catch(() => {});
+});
+
+registerCallback('cat_base', async (ctx) => {
+  const user = ctx.state.user;
+  const { text, keyboard } = renderBaseCategoryView(user);
+  await safeEditOrReply(ctx, text, keyboard);
+  await ctx.answerCbQuery().catch(() => {});
+});
+
+// Navigate to Category Partition View (Backward compatibility)
 registerCallback('help_cat', async (ctx, payload) => {
   const user = ctx.state.user;
   const categoryKey = payload?.targetId || ctx.state?.callback?.targetId || 'gathering';

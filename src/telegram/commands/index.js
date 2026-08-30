@@ -12,6 +12,12 @@ import { handleOfflineCommand } from './offline.js';
 import { handleBossCommand } from './boss.js';
 import { handleBaseCommand } from './base.js';
 import { handleHelpCommand } from './help.js';
+import {
+  handleGatheringCategoryCommand,
+  handleBlacksmithCategoryCommand,
+  handleEconomyCategoryCommand,
+  handle3DMultiplayerCategoryCommand
+} from './categoryCommands.js';
 import { logger } from '../../utils/logger.js';
 
 /**
@@ -37,6 +43,12 @@ export function registerCommands(bot) {
   bot.command(['boss', 'groupnode'], handleBossCommand);
   bot.command(['base', 'build'], handleBaseCommand);
   bot.command(['help', 'guide'], handleHelpCommand);
+
+  // Dedicated Category Navigation Commands
+  bot.command(['gatheringharvest', 'gathering_harvest'], handleGatheringCategoryCommand);
+  bot.command(['blacksmithequipment', 'blacksmith_equipment'], handleBlacksmithCategoryCommand);
+  bot.command(['economytrading', 'economy_trading'], handleEconomyCategoryCommand);
+  bot.command(['3dvoxelbasemultiplayer', 'voxelbase', 'voxel_base'], handle3DMultiplayerCategoryCommand);
 
   // Command placeholders for future steps
   const placeholderCommands = [

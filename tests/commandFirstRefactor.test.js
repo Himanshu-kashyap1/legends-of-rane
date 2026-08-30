@@ -39,15 +39,15 @@ test('1. Main Menu is clean and streamlined (2 primary buttons: Add Me and Comma
   assert.strictEqual(buttonCount, 2);
 });
 
-test('2. Help View renders partition categories and category drill-downs with quote blocks', () => {
+test('2. Help View renders category commands and category drill-downs', () => {
   const user = { telegramId: '12345' };
   const { text, keyboard } = renderHelpView(user);
 
   assert.ok(text.includes('COMMAND GUIDE'));
-  assert.ok(text.includes('GATHERING & HARVEST'));
-  assert.ok(text.includes('BLACKSMITH & EQUIPMENT'));
-  assert.ok(text.includes('ECONOMY & TRADING'));
-  assert.ok(text.includes('3D VOXEL BASE & MULTIPLAYER'));
+  assert.ok(text.includes('/gatheringharvest'));
+  assert.ok(text.includes('/blacksmithequipment'));
+  assert.ok(text.includes('/economytrading'));
+  assert.ok(text.includes('/3dvoxelbasemultiplayer'));
 
   const buttonCount = keyboard.reply_markup.inline_keyboard.flat().length;
   assert.ok(buttonCount >= 6);
