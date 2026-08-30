@@ -1,0 +1,33 @@
+{
+  "name": "legends-of-rane",
+  "version": "1.0.0",
+  "description": "Legends of Rane — Telegram-first Multiplayer Resource RPG & 3D Voxel Mini App",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test tests/**/*.test.js",
+    "test:db": "node src/database/testConnection.js",
+    "seed": "node src/database/seedData.js",
+    "db:reset": "node src/database/resetData.js"
+  },
+  "keywords": [
+    "telegram-bot",
+    "rpg",
+    "threejs",
+    "voxel",
+    "telegraf",
+    "mongoose"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5",
+    "telegraf": "^4.16.3"
+  }
+}
