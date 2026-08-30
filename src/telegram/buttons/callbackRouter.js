@@ -96,7 +96,7 @@ export async function callbackRouter(ctx, next) {
   }
 
   try {
-    await handler(ctx);
+    await handler(ctx, ctx.state.callback);
   } catch (err) {
     if (err?.message?.includes('429') || err?.message?.includes('message is not modified')) {
       logger.warn(`Telegram API warning in callback handler [action=${action}]: ${err.message}`);
@@ -108,18 +108,25 @@ export async function callbackRouter(ctx, next) {
 }
 
 /**
- * Safely edits an existing message text or falls back to reply without throwing on 429 / unmodified errors.
+ * Safely edits an existing message text (or photo caption) or falls back to reply without throwing.
  */
 export async function safeEditOrReply(ctx, text, keyboard = {}) {
   try {
-    await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard });
+    if (ctx.callbackQuery?.message?.photo) {
+      // If original message is a photo, edit caption
+      await ctx.editMessageCaption(text, { parse_mode: 'Markdown', ...keyboard });
+    } else {
+      await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard });
+    }
   } catch (err) {
     if (err?.message?.includes('message is not modified')) {
       return;
     }
-    await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard }).catch((replyErr) => {
+    try {
+      await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+    } catch (replyErr) {
       logger.debug('Safe edit/reply fallback caught:', replyErr?.message);
-    });
+    }
   }
 }
 
@@ -135,10 +142,7 @@ registerCallback('nav_main', async (ctx) => {
   }
 
   const { text, keyboard } = renderMainMenu(user);
-  try {
-    await ctx.deleteMessage().catch(() => {});
-  } catch (_) {}
-  await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
+  await safeEditOrReply(ctx, text, keyboard);
   await ctx.answerCbQuery().catch(() => {});
 });
 
@@ -146,20 +150,16 @@ registerCallback('nav_main', async (ctx) => {
 registerCallback('nav_help', async (ctx) => {
   const user = ctx.state.user;
   const { text, keyboard } = renderHelpView(user);
-  await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
-    await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
-  });
+  await safeEditOrReply(ctx, text, keyboard);
   await ctx.answerCbQuery().catch(() => {});
 });
 
 // Navigate to Category Partition View
 registerCallback('help_cat', async (ctx, payload) => {
   const user = ctx.state.user;
-  const categoryKey = payload.targetId || 'gathering';
+  const categoryKey = payload?.targetId || ctx.state?.callback?.targetId || 'gathering';
   const { text, keyboard } = renderCategoryDetailView(user, categoryKey);
-  await ctx.editMessageText(text, { parse_mode: 'Markdown', ...keyboard }).catch(async () => {
-    await ctx.reply(text, { parse_mode: 'Markdown', ...keyboard });
-  });
+  await safeEditOrReply(ctx, text, keyboard);
   await ctx.answerCbQuery().catch(() => {});
 });
 
