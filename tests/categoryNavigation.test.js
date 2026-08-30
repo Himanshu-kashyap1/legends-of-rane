@@ -47,7 +47,7 @@ test('1. Command Guide: renderHelpView lists the 4 category commands and clean n
 
   assert.ok(keyboard && keyboard.reply_markup && keyboard.reply_markup.inline_keyboard);
   const rows = keyboard.reply_markup.inline_keyboard;
-  assert.ok(rows.length >= 3);
+  assert.strictEqual(rows[0][0].text, '🏠 Home');
 
   // Validate callback data lengths under 64 bytes
   for (const row of rows) {

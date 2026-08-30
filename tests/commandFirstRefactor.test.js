@@ -50,7 +50,7 @@ test('2. Help View renders category commands and category drill-downs', () => {
   assert.ok(text.includes('/3dvoxelbasemultiplayer'));
 
   const buttonCount = keyboard.reply_markup.inline_keyboard.flat().length;
-  assert.ok(buttonCount >= 6);
+  assert.strictEqual(buttonCount, 1);
 
   // Category drill-down test
   const catView = renderCategoryDetailView(user, 'gathering');

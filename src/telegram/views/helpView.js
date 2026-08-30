@@ -18,23 +18,12 @@ export function renderHelpView(user) {
     `🌲 /gatheringharvest`,
     `⚒️ /blacksmithequipment`,
     `🎒 /economytrading`,
-    `🏰 /3dvoxelbasemultiplayer`,
-    '',
-    `_Tap a category below or type any command directly!_`
+    `🏰 /3dvoxelbasemultiplayer`
   ].join('\n');
 
   const keyboard = Markup.inlineKeyboard([
     [
-      Markup.button.callback('🌲 Gathering', encodeCallback({ action: 'cat_gathering', ownerId })),
-      Markup.button.callback('⚒️ Blacksmith', encodeCallback({ action: 'cat_blacksmith', ownerId }))
-    ],
-    [
-      Markup.button.callback('🎒 Economy', encodeCallback({ action: 'cat_economy', ownerId })),
-      Markup.button.callback('🏰 3D Base', encodeCallback({ action: 'cat_base', ownerId }))
-    ],
-    [
-      Markup.button.callback('🏠 Home', encodeCallback({ action: 'nav_main', ownerId })),
-      Markup.button.callback('❌ Close', encodeCallback({ action: 'nav_close', ownerId }))
+      Markup.button.callback('🏠 Home', encodeCallback({ action: 'nav_main', ownerId }))
     ]
   ]);
 
